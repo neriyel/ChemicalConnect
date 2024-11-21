@@ -3,5 +3,8 @@
  */
 public class ClickedGridButton extends UnclickedGridButton
 {
-
+        public ClickedGridButton(final String label)
+        {
+            super(label);
+        }
 }
