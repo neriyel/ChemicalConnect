@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="NumberGameController" spacing="10" alignment="CENTER">
+    <!-- mainLabel -->
+    <Label fx:id="mainLabel" text="Game will start soon!" />
+
+    <!-- gridPane for buttons (make sure GridPane (not just VBox) is responsive to screen dimensions  -->
+    <GridPane fx:id="gridPane" maxWidth="Infinity" maxHeight="Infinity"
+              GridPane.vgrow="ALWAYS" VBox.vgrow="ALWAYS" hgap="10" vgap="10">
+        <!-- Columns -->
+        <columnConstraints>
+            <ColumnConstraints percentWidth="20.0" />
+            <ColumnConstraints percentWidth="20.0" />
+            <ColumnConstraints percentWidth="20.0" />
+            <ColumnConstraints percentWidth="20.0" />
+            <ColumnConstraints percentWidth="20.0" />
+        </columnConstraints>
+        <!-- Rows -->
+        <rowConstraints>
+            <RowConstraints percentHeight="25.0" />
+            <RowConstraints percentHeight="25.0" />
+            <RowConstraints percentHeight="25.0" />
+            <RowConstraints percentHeight="25.0" />
+        </rowConstraints>
+    </GridPane>
+</VBox>

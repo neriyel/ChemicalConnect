@@ -1,14 +1,29 @@
 public class UnclickedGridButton extends GameButton
 {
+    private final static int UNCLICKED_VALUE = 0;
 
-    public UnclickedGridButton(final String label)
+    private final int value;
+
+    public UnclickedGridButton()
     {
-        this.setText(label);
+        this.setText("[]");
+        this.value = UNCLICKED_VALUE;
     }
 
+    /**
+     * @@@@@@@@@@ NEED TO REFACTOR EVENTUALLY @@@@
+     * @param index
+     * @return
+     */
     @Override
     public boolean validButton(final String index)
     {
         return false;
+    }
+
+    @Override
+    public int getValue()
+    {
+        return value;
     }
 }
