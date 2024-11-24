@@ -1,6 +1,5 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -11,7 +10,9 @@ public class NumberGameController
 {
 
     // Static variables
-    private static final int NUM_BUTTONS = 20;
+    private static final int NUM_BUTTONS          = 20;
+    private static final int LENGTH_CORRECTOR     = 1;
+    private static final int DEFAULT_BUTTON_VALUE = 0;
 
     // Instance variables (non-final)
     private ArrayList<Integer> validButtons;
@@ -40,7 +41,7 @@ public class NumberGameController
 
             // Set button action
             int index = i;
-            buttons[i].setOnAction(event -> handleButtonClick(index, event));
+            buttons[i].setOnAction(event -> buttonClicked(index, event));
 
             // Add button to grid
             int row = i / 5;
@@ -51,10 +52,15 @@ public class NumberGameController
         nextMove();
     }
 
-    private void handleButtonClick(int index, ActionEvent event)
+    /**
+     * On button click, check if button index is part of validButtons array. If true, cast UnclickedGridButton -> ClickedGridButton. Set the value to rand. Set label to rand.
+     *
+     * @param index
+     * @param event
+     */
+    private void buttonClicked(int index, ActionEvent event)
     {
-        System.out.println("Button " + index + " clicked!");
-        // Add logic for button click handling here
+
     }
 
     private void nextMove()
@@ -77,6 +83,7 @@ public class NumberGameController
         if(validButtons.isEmpty())
         {
             mainLabel.setText("Impossible to place the next number: " + rand);
+            endGame();
         }
 
         if(!validButtons.isEmpty())
@@ -104,11 +111,17 @@ public class NumberGameController
             }
         }
 
+        // debugging purposes
+        for(Integer validButton : validButtons)
+        {
+            System.out.println("Valid buttons: " + validButton);
+        }
         return validButtons;
     }
 
     /**
-     * Returns true if all previous buttons' values are less than the current rand value, otherwise false
+     * Returns true if all previous buttons' values are less than the current rand value, otherwise false.
+     * Also returns true if button is still a default value.
      *
      * @param index
      *
@@ -118,25 +131,43 @@ public class NumberGameController
     {
         for(int i = 0; i < index; i++)
         {
-            if(buttons[i].getValue() > rand)
+            if(!(buttons[i] instanceof UnclickedGridButton))
             {
-                return false;
+                if(buttons[i].getValue() >= rand)
+                {
+                    return false;
+                }
             }
         }
         return true;
 
     }
 
+    /**
+     * Returns true if all post buttons' values are greater than the current rand value, otherwise false
+     *
+     * @param index
+     *
+     * @return
+     */
     private boolean postButtonsValid(final int index)
     {
-        for(int i = 0; i < index; i++)
+        for(int i = NUM_BUTTONS - LENGTH_CORRECTOR; i > index; i--)
         {
-            if(buttons[i].getValue() < rand)
+            if(!(buttons[i] instanceof UnclickedGridButton))
             {
-                return false;
+                if(buttons[i].getValue() <= rand)
+                {
+                    return false;
+                }
             }
         }
         return true;
+    }
+
+    private void endGame()
+    {
+        // logic for ending game
     }
 
 }
