@@ -1,4 +1,6 @@
-public class UnclickedGridButton extends GameButton
+import java.util.ArrayList;
+
+public class UnclickedGridButton extends GridButton
 {
     private final static int UNCLICKED_VALUE = 0;
 
@@ -10,15 +12,11 @@ public class UnclickedGridButton extends GameButton
         this.value = UNCLICKED_VALUE;
     }
 
-    /**
-     * @@@@@@@@@@ NEED TO REFACTOR EVENTUALLY @@@@
-     * @param index
-     * @return
-     */
+
     @Override
-    public boolean validButton(final String index)
+    public boolean validButton(final int index, final ArrayList<Integer> validButtons)
     {
-        return false;
+        return validButtons.contains(index);
     }
 
     @Override
