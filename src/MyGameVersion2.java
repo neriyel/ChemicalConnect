@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class MyGame extends Application {
+public class MyGameVersion2 extends Application {
 
     private Circle selectedDot = null;
     private Line currentLine = null;
