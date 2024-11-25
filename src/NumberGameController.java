@@ -127,6 +127,7 @@ public class NumberGameController
         {
             totalGamesWon++;
             totalGamesPlayed++;
+            countPlacements();
             endSession();
         }
     }
@@ -145,6 +146,7 @@ public class NumberGameController
         if(validButtons.isEmpty())
         {
             mainLabel.setText("Impossible to place the next number: " + rand);
+            countPlacements();
             totalGamesPlayed++;
             endSession();
         }
@@ -159,6 +161,17 @@ public class NumberGameController
             System.out.println("Should not be here.");
         }
 
+    }
+
+    private void countPlacements()
+    {
+        for(GridButton button : buttons)
+        {
+            if(button instanceof ClickedGridButton)
+            {
+                placements++;
+            }
+        }
     }
 
     private ArrayList<Integer> listValidButtons()
@@ -293,7 +306,6 @@ public class NumberGameController
 
     private void restartGame()
     {
-        totalGamesWon++;
         initialize();
     }
 
