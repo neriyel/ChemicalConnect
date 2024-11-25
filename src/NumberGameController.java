@@ -1,7 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -13,15 +12,17 @@ public class NumberGameController
 {
 
     // Static variables
-    private static final int NUM_BUTTONS          = 20;
-    private static final int LENGTH_CORRECTOR     = 1;
-    private static final int DEFAULT_BUTTON_VALUE = 0;
-    private static final int NUM_ROWS             = 5;
-    private static final int NUM_COL              = 5;
+    private static final int NUM_BUTTONS      = 20;
+    private static final int LENGTH_CORRECTOR = 1;
+    private static final int NUM_ROWS         = 5;
+    private static final int NUM_COL          = 5;
 
     // Instance variables (non-final)
     private ArrayList<Integer> validButtons;
     private int                rand;
+    private int                totalGamesPlayed = 0;
+    private int                totalGamesWon    = 0;
+    private int                placements       = 0;
 
     // FXML variables
     @FXML
@@ -100,8 +101,34 @@ public class NumberGameController
 
     private void nextMove()
     {
+        checkIfWon();
         generateRandomInt();
         checkNextMove(rand);
+    }
+
+    private void checkIfWon()
+    {
+        boolean allClicked = true;
+
+        if(buttons != null)
+        {
+            for(GridButton button : buttons)
+            {
+                if(!(button instanceof ClickedGridButton))
+                {
+                    allClicked = false;
+                    break;
+                }
+            }
+
+        }
+
+        if(allClicked)
+        {
+            totalGamesWon++;
+            totalGamesPlayed++;
+            endSession();
+        }
     }
 
     private void generateRandomInt()
@@ -118,7 +145,8 @@ public class NumberGameController
         if(validButtons.isEmpty())
         {
             mainLabel.setText("Impossible to place the next number: " + rand);
-            endGame();
+            totalGamesPlayed++;
+            endSession();
         }
 
         if(!validButtons.isEmpty())
@@ -198,7 +226,7 @@ public class NumberGameController
         return true;
     }
 
-    private void endGame()
+    private void endSession()
     {
         final Alert      alert;
         final ButtonType tryAgain;
@@ -210,14 +238,14 @@ public class NumberGameController
 
         alert.setTitle("Game Over");
         alert.setHeaderText("Impossible to place the next number: " + rand);
-        alert.setContentText("Try Again?");
+        alert.setContentText("Try Again?" + scoreSummary());
         alert.getButtonTypes().setAll(endGame, tryAgain);
 
         alert.showAndWait().ifPresent(response ->
                                       {
                                           if(response == endGame)
                                           {
-                                              System.exit(0);
+                                              endGame();
                                           }
                                           else if(response == tryAgain)
                                           {
@@ -228,8 +256,45 @@ public class NumberGameController
 
     }
 
+    private void endGame()
+    {
+        final Alert      alert;
+        final ButtonType exit;
+
+        alert = new Alert(Alert.AlertType.WARNING);
+        exit  = new ButtonType("Exit");
+
+        alert.setTitle("Game Ended");
+        alert.setHeaderText("Game ended, thanks for playing!");
+        alert.setContentText(scoreSummary());
+        alert.getButtonTypes().setAll(exit);
+
+        alert.showAndWait().ifPresent(response ->
+                                      {
+                                          if(response == exit)
+                                          {
+                                              System.exit(0);
+                                          }
+                                      });
+
+    }
+
+    private String scoreSummary()
+    {
+        final String summary;
+        final double placementRate;
+
+        placementRate = (double) placements / totalGamesPlayed;
+
+        summary = String.format("You won %d out of %d game(s), with %d successful placements, averaging to %.2f placements per game", totalGamesWon, totalGamesPlayed, placements, placementRate);
+
+        return summary;
+    }
+
     private void restartGame()
     {
+        totalGamesWon++;
+        initialize();
     }
 
 }
