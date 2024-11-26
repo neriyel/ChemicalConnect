@@ -16,6 +16,8 @@ import java.util.List;
 public class MyGameController
 {
     //Static variables
+    private static int SINGLE_BOND_WIDTH = 5;
+    private static int DOUBLE_BOND_WIDTH = 3;
 
     // Instance variables (non-final)
     private       Circle       selectedDot = null;
@@ -119,7 +121,7 @@ public class MyGameController
         currentLine.setEndX(circle.getCenterX());
         currentLine.setEndY(circle.getCenterY());
         currentLine.setStroke(Color.BLACK);
-        currentLine.setStrokeWidth(2);
+        currentLine.setStrokeWidth(SINGLE_BOND_WIDTH);
 
         pane.getChildren()
                 .add(currentLine);
@@ -330,7 +332,7 @@ public class MyGameController
                             if(linesConnectSamePoints(lineStartX, lineStartY, lineEndX, lineEndY, otherLine.getStartX(), otherLine.getStartY(), otherLine.getEndX(), otherLine.getEndY()))
                             {
                                 // Prevent removal if higher-order bonds exist
-                                showErrorPopup("You must remove all higher-order bonds (e.g., double/triple bonds) before removing this bond.");
+                                showErrorPopup("You must remove all higher-order bonds (e.g., double bonds) before removing this bond.");
                                 return; // Stop further execution
                             }
                         }
@@ -339,7 +341,8 @@ public class MyGameController
 
                 // If valid, remove the bond from the List, and the GUI
                 iter.remove();
-                pane.getChildren().remove(line);
+                pane.getChildren()
+                        .remove(line);
                 break; // Stop once the bond is found and removed
             }
         }
@@ -391,9 +394,12 @@ public class MyGameController
         double py = ux * offset;
 
         // Create parallel line
-        return new Line(
+        final Line parallelLine = new Line(
                 line.getStartX() + px,
                 line.getStartY() + py, line.getEndX() + px, line.getEndY() + py);
+        parallelLine.setStrokeWidth(DOUBLE_BOND_WIDTH);
+
+        return parallelLine;
     }
 
     public void startGame(final ActionEvent actionEvent)
