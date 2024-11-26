@@ -1,3 +1,5 @@
+package NumberGame;
+
 import java.util.ArrayList;
 
 public class UnclickedGridButton extends GridButton

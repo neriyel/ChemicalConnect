@@ -1,3 +1,5 @@
+package MyGame;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -37,6 +39,8 @@ public class MyGameController
 
         gameLabel.setText("test label THIS ONE");
         // Create three dots and set their initial position
+
+
         Circle dot1 = createDot(0, 0, 10, gamePane);
         Circle dot2 = createDot(0, 0, 10, gamePane);
         Circle dot3 = createDot(0, 0, 10, gamePane);
@@ -225,7 +229,7 @@ public class MyGameController
      */
     private Circle getDotAt(double x, double y, Pane pane)
     {
-        for(var node : pane.getChildren())
+        for(final var node : pane.getChildren())
         {
             if(node instanceof Circle)
             {

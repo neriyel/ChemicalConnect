@@ -1,3 +1,5 @@
+package NumberGame;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

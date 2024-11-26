@@ -1,3 +1,5 @@
+package WordGame;
+
 public class Score
 {
     // Instance variables (non-final)

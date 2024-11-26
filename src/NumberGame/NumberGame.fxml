@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="NumberGameController" spacing="10" alignment="CENTER">
+      fx:controller="NumberGame.NumberGameController" spacing="10" alignment="CENTER">
     <!-- mainLabel -->
     <Label fx:id="mainLabel" text="Game will start soon!" />
 
