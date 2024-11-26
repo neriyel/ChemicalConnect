@@ -37,84 +37,33 @@ public class MyGameController
     @FXML
     private void initialize()
     {
-
         gameLabel.setText("test label THIS ONE");
-        // Create three dots and set their initial position
 
-        //        Circle dot1 = createDot(0, 0, 10, gamePane);
-        //        Circle dot2 = createDot(0, 0, 10, gamePane);
-        //        Circle dot3 = createDot(0, 0, 10, gamePane);
-
-        // TODO: to turn into amino acid instead
-//        ElementFactory carbonFactory = new CarbonFactory();
-//        GameElement    c1            = carbonFactory.createElement();
-//        GameElement    c2            = carbonFactory.createElement();
-
-        AminoAcid test = new AminoAcid("test");
+        AminoAcid         test   = new AminoAcid("test");
         List<GameElement> testAA = test.createAminoAcid("test");
 
-        // Add dots to the pane
-        gamePane.getChildren()
-                .addAll(testAA);
-
-        //        // Add listeners to adjust dot positions when the window is resized
-        //        gamePane.widthProperty()
-        //                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
-        //        gamePane.heightProperty()
-        //                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
-        //
-        //        // Initially adjust positions based on current pane size
-        //        adjustDotPositions();
+        for(final GameElement element : testAA)
+        {
+            addMouseEventHandlers(element, gamePane);
+            gamePane.getChildren()
+                    .add(element); // Add the dot to the pane
+        }
     }
-
-    //    private void adjustDotPositions()
-    //    {
-    //        // Get the center of the pane
-    //        double centerX = gamePane.getWidth() / 2;
-    //        double centerY = gamePane.getHeight() / 2;
-    //
-    //        // Set the positions of the dots around the center
-    //        Circle dot1 = (Circle) gamePane.getChildren()
-    //                .get(0);
-    //        Circle dot2 = (Circle) gamePane.getChildren()
-    //                .get(1);
-    //        Circle dot3 = (Circle) gamePane.getChildren()
-    //                .get(2);
-    //
-    //        // Position dots around the center
-    //        dot1.setCenterX(centerX - 50); // Offset for the first dot
-    //        dot1.setCenterY(centerY);
-    //
-    //        dot2.setCenterX(centerX + 50); // Offset for the second dot
-    //        dot2.setCenterY(centerY);
-    //
-    //        dot3.setCenterX(centerX); // The third dot will be slightly below the center
-    //        dot3.setCenterY(centerY + 50); // Offset below center
-    //    }
 
     /**
      * Creates a dot on the pane and sets up event handlers for interactions.
      *
-     * @param x      The x-coordinate of the dot.
-     * @param y      The y-coordinate of the dot.
-     * @param radius The radius of the dot.
-     * @param pane   The pane where the dot will be added.
+     * @param pane The pane where the dot will be added.
      *
      * @return The created Circle object representing the dot.
      */
-    private Circle createDot(double x, double y, double radius, Pane pane)
+    private Circle addMouseEventHandlers(GameElement element, Pane pane)
     {
-        Circle circle = new Circle(x, y, radius, Color.DEEPSKYBLUE);
-        circle.setStroke(Color.DARKBLUE);
-        circle.setStrokeWidth(2);
+        element.setOnMousePressed(e -> onDotPressed(element, pane, e));
+        element.setOnMouseDragged(this::onDotDragged);
+        element.setOnMouseReleased(e -> onDotReleased(element, pane, e));
 
-        circle.setOnMouseEntered(e -> circle.setFill(Color.LIGHTGREEN));
-        circle.setOnMouseExited(e -> circle.setFill(Color.DEEPSKYBLUE));
-        circle.setOnMousePressed(e -> onDotPressed(circle, pane, e));
-        circle.setOnMouseDragged(this::onDotDragged);
-        circle.setOnMouseReleased(e -> onDotReleased(circle, pane, e));
-
-        return circle;
+        return element;
     }
 
     /**

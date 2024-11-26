@@ -15,7 +15,11 @@ public class Carbon extends GameElement
     {
         super(x, y, CARBON_RADIUS, CARBON_COLOR);
 
-    }
+        //TODO: probably make below helper method
+        this.setStroke(Color.DARKBLUE);
+        this.setStrokeWidth(2);
 
-    // TODO: add more methods (like color?) to make this a useful abstract class
+        this.setOnMouseEntered(e -> this.setFill(Color.LIGHTGREEN));
+        this.setOnMouseExited(e -> this.setFill(CARBON_COLOR));
+    }
 }
