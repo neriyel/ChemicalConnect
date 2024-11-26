@@ -1,7 +1,12 @@
 package MyGame;
 
-public abstract class Nitrogen implements Element
+public class Nitrogen extends GameElement
 {
+    @Override
+    public void create()
+    {
+
+    }
 
     // TODO: add more methods (like color?) to make this a useful abstract class
 }
