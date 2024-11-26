@@ -94,7 +94,9 @@ public class NumberGameController
         buttons[index].setMaxWidth(Double.MAX_VALUE);
         buttons[index].setMaxHeight(Double.MAX_VALUE);
 
-        gridPane.getChildren().removeIf(node -> GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column);
+        gridPane.getChildren()
+                .removeIf(node -> GridPane.getRowIndex(node) == row &&
+                        GridPane.getColumnIndex(node) == column);
 
         gridPane.add(clickedButton, column, row);
     }
@@ -252,20 +254,22 @@ public class NumberGameController
         alert.setTitle("Game Over");
         alert.setHeaderText("Impossible to place the next number: " + rand);
         alert.setContentText("Try Again?" + scoreSummary());
-        alert.getButtonTypes().setAll(endGame, tryAgain);
+        alert.getButtonTypes()
+                .setAll(endGame, tryAgain);
 
-        alert.showAndWait().ifPresent(response ->
-                                      {
-                                          if(response == endGame)
-                                          {
-                                              endGame();
-                                          }
-                                          else if(response == tryAgain)
-                                          {
-                                              restartGame();
-                                          }
+        alert.showAndWait()
+                .ifPresent(response ->
+                           {
+                               if(response == endGame)
+                               {
+                                   endGame();
+                               }
+                               else if(response == tryAgain)
+                               {
+                                   restartGame();
+                               }
 
-                                      });
+                           });
 
     }
 
@@ -280,15 +284,17 @@ public class NumberGameController
         alert.setTitle("Game Ended");
         alert.setHeaderText("Game ended, thanks for playing!");
         alert.setContentText(scoreSummary());
-        alert.getButtonTypes().setAll(exit);
+        alert.getButtonTypes()
+                .setAll(exit);
 
-        alert.showAndWait().ifPresent(response ->
-                                      {
-                                          if(response == exit)
-                                          {
-                                              System.exit(0);
-                                          }
-                                      });
+        alert.showAndWait()
+                .ifPresent(response ->
+                           {
+                               if(response == exit)
+                               {
+                                   System.exit(0);
+                               }
+                           });
 
     }
 

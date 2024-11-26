@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="MyGameController">
+    <!--VBox for the label at the top-->
+    <VBox alignment="TOP_CENTER" spacing="10">
+        <Label fx:id="gameLabel" text="Draw this amino acid: "/>
+    </VBox>
+
+    <!--Pane for drawing area-->
+    <Pane fx:id="gamePane" prefHeight="696" prefWidth="420" maxWidth="Infinity" maxHeight="Infinity">
+        <!--Dots will be loaded here-->
+    </Pane>
+
+    <!--    <Button text="Start" fx:id="startButton" onAction="#startGame"/>-->
+
+</StackPane>
