@@ -1,11 +1,19 @@
 package MyGame;
 
+import javafx.scene.paint.Color;
+
 public class CarbonFactory implements ElementFactory
 {
-    // TODO: why did it default return type to MyGame.Element? this caused an error
+
     @Override
-    public Element createElement()
+    public GameElement createElement()
     {
-        return null;
+        GameElement carbon = new Carbon(200, 150);
+
+        carbon.setStroke(Color.DARKBLUE);
+        carbon.setStrokeWidth(2);
+        
+        return carbon;
     }
+
 }

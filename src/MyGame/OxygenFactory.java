@@ -3,7 +3,7 @@ package MyGame;
 public class OxygenFactory implements ElementFactory
 {
     @Override
-    public Element createElement()
+    public GameElement createElement()
     {
         return null;
     }

@@ -2,6 +2,7 @@ package MyGame;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -40,49 +41,52 @@ public class MyGameController
         gameLabel.setText("test label THIS ONE");
         // Create three dots and set their initial position
 
+        //        Circle dot1 = createDot(0, 0, 10, gamePane);
+        //        Circle dot2 = createDot(0, 0, 10, gamePane);
+        //        Circle dot3 = createDot(0, 0, 10, gamePane);
 
-        Circle dot1 = createDot(0, 0, 10, gamePane);
-        Circle dot2 = createDot(0, 0, 10, gamePane);
-        Circle dot3 = createDot(0, 0, 10, gamePane);
+        ElementFactory carbonFactory = new CarbonFactory();
+        GameElement    c1            = carbonFactory.createElement();
+        GameElement    c2            = carbonFactory.createElement();
 
         // Add dots to the pane
         gamePane.getChildren()
-                .addAll(dot1, dot2, dot3);
+                .addAll(c1, c2);
 
-        // Add listeners to adjust dot positions when the window is resized
-        gamePane.widthProperty()
-                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
-        gamePane.heightProperty()
-                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
-
-        // Initially adjust positions based on current pane size
-        adjustDotPositions();
+        //        // Add listeners to adjust dot positions when the window is resized
+        //        gamePane.widthProperty()
+        //                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
+        //        gamePane.heightProperty()
+        //                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
+        //
+        //        // Initially adjust positions based on current pane size
+        //        adjustDotPositions();
     }
 
-    private void adjustDotPositions()
-    {
-        // Get the center of the pane
-        double centerX = gamePane.getWidth() / 2;
-        double centerY = gamePane.getHeight() / 2;
-
-        // Set the positions of the dots around the center
-        Circle dot1 = (Circle) gamePane.getChildren()
-                .get(0);
-        Circle dot2 = (Circle) gamePane.getChildren()
-                .get(1);
-        Circle dot3 = (Circle) gamePane.getChildren()
-                .get(2);
-
-        // Position dots around the center
-        dot1.setCenterX(centerX - 50); // Offset for the first dot
-        dot1.setCenterY(centerY);
-
-        dot2.setCenterX(centerX + 50); // Offset for the second dot
-        dot2.setCenterY(centerY);
-
-        dot3.setCenterX(centerX); // The third dot will be slightly below the center
-        dot3.setCenterY(centerY + 50); // Offset below center
-    }
+    //    private void adjustDotPositions()
+    //    {
+    //        // Get the center of the pane
+    //        double centerX = gamePane.getWidth() / 2;
+    //        double centerY = gamePane.getHeight() / 2;
+    //
+    //        // Set the positions of the dots around the center
+    //        Circle dot1 = (Circle) gamePane.getChildren()
+    //                .get(0);
+    //        Circle dot2 = (Circle) gamePane.getChildren()
+    //                .get(1);
+    //        Circle dot3 = (Circle) gamePane.getChildren()
+    //                .get(2);
+    //
+    //        // Position dots around the center
+    //        dot1.setCenterX(centerX - 50); // Offset for the first dot
+    //        dot1.setCenterY(centerY);
+    //
+    //        dot2.setCenterX(centerX + 50); // Offset for the second dot
+    //        dot2.setCenterY(centerY);
+    //
+    //        dot3.setCenterX(centerX); // The third dot will be slightly below the center
+    //        dot3.setCenterY(centerY + 50); // Offset below center
+    //    }
 
     /**
      * Creates a dot on the pane and sets up event handlers for interactions.

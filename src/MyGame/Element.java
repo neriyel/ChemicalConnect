@@ -1,6 +1,8 @@
-package MyGame;
-
-public interface Element
-{
-    void create();
-}
+//package MyGame;
+//
+//import javafx.scene.Node;
+//
+//public interface Element
+//{
+//    void dislayInfo();
+//}
