@@ -45,13 +45,17 @@ public class MyGameController
         //        Circle dot2 = createDot(0, 0, 10, gamePane);
         //        Circle dot3 = createDot(0, 0, 10, gamePane);
 
-        ElementFactory carbonFactory = new CarbonFactory();
-        GameElement    c1            = carbonFactory.createElement();
-        GameElement    c2            = carbonFactory.createElement();
+        // TODO: to turn into amino acid instead
+//        ElementFactory carbonFactory = new CarbonFactory();
+//        GameElement    c1            = carbonFactory.createElement();
+//        GameElement    c2            = carbonFactory.createElement();
+
+        AminoAcid test = new AminoAcid("test");
+        List<GameElement> testAA = test.createAminoAcid("test");
 
         // Add dots to the pane
         gamePane.getChildren()
-                .addAll(c1, c2);
+                .addAll(testAA);
 
         //        // Add listeners to adjust dot positions when the window is resized
         //        gamePane.widthProperty()

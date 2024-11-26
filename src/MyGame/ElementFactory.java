@@ -2,5 +2,5 @@ package MyGame;
 
 public interface ElementFactory
 {
-    GameElement createElement();
+    GameElement createElement(final double x, final double y);
 }

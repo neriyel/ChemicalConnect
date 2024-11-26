@@ -6,9 +6,9 @@ public class CarbonFactory implements ElementFactory
 {
 
     @Override
-    public GameElement createElement()
+    public GameElement createElement(final double x, final double y)
     {
-        GameElement carbon = new Carbon(200, 150);
+        GameElement carbon = new Carbon(x, y);
 
         carbon.setStroke(Color.DARKBLUE);
         carbon.setStrokeWidth(2);
