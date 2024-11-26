@@ -1,13 +1,12 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,32 +30,42 @@ public class MyGameController
     private Label gameLabel;
 
     @FXML
-    private void initialize() {
+    private void initialize()
+    {
+
+        gameLabel.setText("test label THIS ONE");
         // Create three dots and set their initial position
         Circle dot1 = createDot(0, 0, 10, gamePane);
         Circle dot2 = createDot(0, 0, 10, gamePane);
         Circle dot3 = createDot(0, 0, 10, gamePane);
 
         // Add dots to the pane
-        gamePane.getChildren().addAll(dot1, dot2, dot3);
+        gamePane.getChildren()
+                .addAll(dot1, dot2, dot3);
 
         // Add listeners to adjust dot positions when the window is resized
-        gamePane.widthProperty().addListener((observable, oldValue, newValue) -> adjustDotPositions());
-        gamePane.heightProperty().addListener((observable, oldValue, newValue) -> adjustDotPositions());
+        gamePane.widthProperty()
+                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
+        gamePane.heightProperty()
+                .addListener((observable, oldValue, newValue) -> adjustDotPositions());
 
         // Initially adjust positions based on current pane size
         adjustDotPositions();
     }
 
-    private void adjustDotPositions() {
+    private void adjustDotPositions()
+    {
         // Get the center of the pane
         double centerX = gamePane.getWidth() / 2;
         double centerY = gamePane.getHeight() / 2;
 
         // Set the positions of the dots around the center
-        Circle dot1 = (Circle) gamePane.getChildren().get(0);
-        Circle dot2 = (Circle) gamePane.getChildren().get(1);
-        Circle dot3 = (Circle) gamePane.getChildren().get(2);
+        Circle dot1 = (Circle) gamePane.getChildren()
+                .get(0);
+        Circle dot2 = (Circle) gamePane.getChildren()
+                .get(1);
+        Circle dot3 = (Circle) gamePane.getChildren()
+                .get(2);
 
         // Position dots around the center
         dot1.setCenterX(centerX - 50); // Offset for the first dot
@@ -68,7 +77,6 @@ public class MyGameController
         dot3.setCenterX(centerX); // The third dot will be slightly below the center
         dot3.setCenterY(centerY + 50); // Offset below center
     }
-
 
     /**
      * Creates a dot on the pane and sets up event handlers for interactions.
@@ -153,6 +161,11 @@ public class MyGameController
                 currentLine.setEndX(targetDot.getCenterX());
                 currentLine.setEndY(targetDot.getCenterY());
                 bonds.add(new Line[]{currentLine}); // Add single bond
+                //debugging
+                for(Line[] bond : bonds)
+                {
+                    System.out.println(Arrays.toString(bond) + "hehe");
+                }
                 addClickListenerToLine(currentLine, pane); // Add click listener for removal
             }
             else if(existingBond.length == 1)
@@ -164,6 +177,12 @@ public class MyGameController
                 // Add a second (parallel) line
                 Line offsetLine = createParallelLine(existingBond[0]);
                 bonds.add(new Line[]{existingBond[0], offsetLine});
+                //debugging
+                System.out.println("Start second bond: ");
+                for(Line[] bond : bonds)
+                {
+                    System.out.println(Arrays.toString(bond));
+                }
                 pane.getChildren()
                         .add(offsetLine);
                 addClickListenerToLine(offsetLine, pane); // Add click listener for removal
@@ -180,6 +199,12 @@ public class MyGameController
             // Remove the temporary line if the connection is invalid
             pane.getChildren()
                     .remove(currentLine);
+            //debugging
+            System.out.println("invalid bonds?: ");
+            for(Line[] bond : bonds)
+            {
+                System.out.println(Arrays.toString(bond));
+            }
         }
 
         // Reset state
@@ -255,12 +280,18 @@ public class MyGameController
     {
         line.setOnMouseClicked(event ->
                                {
-                                   // Remove the clicked line from the pane
-                                   pane.getChildren()
-                                           .remove(line);
-
                                    // Remove the bond from the list
-                                   removeBondFromList(line);
+                                   removeBondFromList(line, pane);
+
+                                   //                                   // Remove the clicked line from the pane
+                                   //                                   pane.getChildren()
+                                   //                                           .remove(line);
+                                   //debugging
+                                   System.out.println("removing bond");
+                                   for(Line[] bond : bonds)
+                                   {
+                                       System.out.println(Arrays.toString(bond));
+                                   }
                                });
     }
 
@@ -268,19 +299,72 @@ public class MyGameController
      * Removes the specified bond (line) from the bond list.
      *
      * @param line The line to remove from the bond list.
+     * @param pane
      */
-    private void removeBondFromList(Line line)
+    private void removeBondFromList(final Line line, final Pane pane)
     {
+        // Iterate through the bonds list
         for(Iterator<Line[]> iter = bonds.iterator(); iter.hasNext(); )
         {
             Line[] bondPair = iter.next();
+
+            // Check if the line belongs to this bond pair
             if(Arrays.asList(bondPair)
                     .contains(line))
             {
+                // Extract the coordinates of the line being removed
+                double lineStartX = line.getStartX();
+                double lineStartY = line.getStartY();
+                double lineEndX   = line.getEndX();
+                double lineEndY   = line.getEndY();
+
+                // Check if any other `bondPair` exists between the same coordinates
+                for(Line[] otherBondPair : bonds)
+                {
+                    // Skip the current bondPair
+                    if(otherBondPair != bondPair)
+                    {
+                        for(final Line otherLine : otherBondPair)
+                        {
+                            // Compare coordinates (unordered since bonds are bidirectional)
+                            if(linesConnectSamePoints(lineStartX, lineStartY, lineEndX, lineEndY, otherLine.getStartX(), otherLine.getStartY(), otherLine.getEndX(), otherLine.getEndY()))
+                            {
+                                // Prevent removal if higher-order bonds exist
+                                showErrorPopup("You must remove all higher-order bonds (e.g., double/triple bonds) before removing this bond.");
+                                return; // Stop further execution
+                            }
+                        }
+                    }
+                }
+
+                // If valid, remove the bond from the List, and the GUI
                 iter.remove();
+                pane.getChildren().remove(line);
                 break; // Stop once the bond is found and removed
             }
         }
+    }
+
+    // Helper method to check if two lines connect the same points (order doesn't matter)
+    private boolean linesConnectSamePoints(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
+    {
+        // Check if line1 connects the same points as line2 (in any order)
+        return ((x1 == x3 && y1 == y3 && x2 == x4 && y2 == y4) ||  // Same direction
+                (x1 == x4 && y1 == y4 && x2 == x3 && y2 == y3));   // Opposite direction
+    }
+
+    /**
+     * Shows an error popup with the given message.
+     *
+     * @param message The error message to display.
+     */
+    private void showErrorPopup(String message)
+    {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid Bond Removal");
+        alert.setHeaderText("Error: Bond Removal Order");
+        alert.setContentText(message);
+        alert.showAndWait(); // Wait for the user to close the dialog
     }
 
     /**

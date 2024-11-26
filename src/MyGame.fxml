@@ -10,7 +10,7 @@
            fx:controller="MyGameController">
     <!--VBox for the label at the top-->
     <VBox alignment="TOP_CENTER" spacing="10">
-        <Label fx:id="gameLabel" text="Draw this amino acid: "/>
+        <Label fx:id="gameLabel" text="this label should NOT show up: "/>
     </VBox>
 
     <!--Pane for drawing area-->

@@ -16,7 +16,7 @@ public class MyGame extends Application
 
         loader = new FXMLLoader(getClass().getResource("MyGame.fxml"));
         scene  = new Scene(loader.load(), 420, 696);
-
+        primaryStage.setResizable(false);
         primaryStage.setTitle("My Game");
         primaryStage.setScene(scene);
         primaryStage.show();
