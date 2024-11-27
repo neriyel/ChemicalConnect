@@ -1,5 +1,7 @@
 package MyGame;
 
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public class Carbon extends GameElement
@@ -21,5 +23,11 @@ public class Carbon extends GameElement
 
         this.setOnMouseEntered(e -> this.setFill(Color.LIGHTGREEN));
         this.setOnMouseExited(e -> this.setFill(CARBON_COLOR));
+    }
+
+    @Override
+    public GameElement getElementAt(final MouseEvent x, final MouseEvent y, final Pane pane)
+    {
+        return null;
     }
 }

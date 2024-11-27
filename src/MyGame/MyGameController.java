@@ -2,14 +2,11 @@ package MyGame;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,13 +16,14 @@ import java.util.List;
 public class MyGameController
 {
     //Static variables
-    private static int SINGLE_BOND_WIDTH = 5;
-    private static int DOUBLE_BOND_WIDTH = 3;
+    private static       int    SINGLE_BOND_WIDTH = 5;
+    private static       int    DOUBLE_BOND_WIDTH = 3;
+    private static final double BOND_OFFSET       = 5.0;
 
     // Instance variables (non-final)
-    private       Circle       selectedDot = null;
-    private       Line         currentLine = null;
-    private final List<Line[]> bonds       = new ArrayList<>(); // Track all bonds (single and double)
+    private       GameElement  selectedElement = null;
+    private       Bond         currentBond     = null;
+    private final List<Bond[]> bonds           = new ArrayList<>(); // Track all bonds (single and double)
 
     // FXML Variables
     @FXML
@@ -51,41 +49,42 @@ public class MyGameController
     }
 
     /**
-     * Creates a dot on the pane and sets up event handlers for interactions.
+     * Sets up event handlers on GameElements for interactions.
      *
      * @param pane The pane where the dot will be added.
      *
-     * @return The created Circle object representing the dot.
      */
-    private Circle addMouseEventHandlers(GameElement element, Pane pane)
+    private void addMouseEventHandlers(GameElement element, Pane pane)
     {
         element.setOnMousePressed(e -> onDotPressed(element, pane, e));
         element.setOnMouseDragged(this::onDotDragged);
         element.setOnMouseReleased(e -> onDotReleased(element, pane, e));
-
-        return element;
     }
 
     /**
      * Handles when a dot is pressed, creating a temporary line for bonding.
      *
-     * @param circle The dot being pressed.
-     * @param pane   The pane where the dot and line are located.
-     * @param event  The mouse event triggered by pressing the dot.
+     * @param element The dot being pressed.
+     * @param pane    The pane where the dot and line are located.
+     * @param event   The mouse event triggered by pressing the dot.
      */
-    private void onDotPressed(Circle circle, Pane pane, MouseEvent event)
+    private void onDotPressed(GameElement element, Pane pane, MouseEvent event)
     {
-        selectedDot = circle;
-        currentLine = new Line();
-        currentLine.setStartX(circle.getCenterX());
-        currentLine.setStartY(circle.getCenterY());
-        currentLine.setEndX(circle.getCenterX());
-        currentLine.setEndY(circle.getCenterY());
-        currentLine.setStroke(Color.BLACK);
-        currentLine.setStrokeWidth(SINGLE_BOND_WIDTH);
+        selectedElement = element;
+
+        currentBond = new Bond();
+        currentBond.setStartX(element.getCenterX());
+        currentBond.setStartY(element.getCenterY());
+        currentBond.setEndX(element.getCenterX());
+        currentBond.setEndY(element.getCenterY());
+        currentBond.setStroke(Color.BLACK);
+        currentBond.setStrokeWidth(SINGLE_BOND_WIDTH);
+
+        // Set the initial Element
+        currentBond.setElement1(selectedElement);
 
         pane.getChildren()
-                .add(currentLine);
+                .add(currentBond);
     }
 
     /**
@@ -95,84 +94,106 @@ public class MyGameController
      */
     private void onDotDragged(MouseEvent event)
     {
-        if(currentLine != null)
+        if(currentBond != null)
         {
-            currentLine.setEndX(event.getX());
-            currentLine.setEndY(event.getY());
+            currentBond.setEndX(event.getX());
+            currentBond.setEndY(event.getY());
         }
     }
 
     /**
      * Handles when a dot is released and manages bond creation or removal.
+     * <p>
+     * Note 1: Creating a new GameElement, we later want to compare GameElements, so must override equals() in GameElement class.
+     * <p>
+     * Note 2: Every Bond must be STORED AS A Bond[]. NOT just a Bond object. This is because elements can have single or double bonds. See below.
+     * <p>
+     * In our bonds list: Storing a single bond, double bond, single bond looks like the following:
+     * [
+     * [single_bond_1] <------------------- Single bond (between e1 and e2)
+     * [single_bond_1, double_bond_1] <---- Double bond (still between e1 and e2)
+     * [single_bond_3] <------------------- Single bond (between e5 and e6)
+     * ]
+     * <p>
+     * Note 3: Single bond exists so create a double bond THAT IS OFFSET PERPENDICULAR to original single bond. We remove the existing line in the process.
      *
-     * @param circle The dot being released.
-     * @param pane   The pane where the dots and lines are located.
-     * @param event  The mouse event triggered by releasing the dot.
+     * @param element The dot being released.
+     * @param pane    The pane where the dots and lines are located.
+     * @param event   The mouse event triggered by releasing the dot.
      */
-    private void onDotReleased(Circle circle, Pane pane, MouseEvent event)
+    private void onDotReleased(GameElement element, Pane pane, MouseEvent event)
     {
-        Circle targetDot = getDotAt(event.getX(), event.getY(), pane);
+        // Note 1: see JavaDoc
+        final GameElement targetElement;
+        targetElement = (GameElement) getDotAt(event.getX(), event.getY(), pane);
 
-        if(targetDot != null && targetDot != selectedDot)
+        if(targetElement != null && targetElement != selectedElement)
         {
-            // Check existing bonds
-            Line[] existingBond = findBond(selectedDot, targetDot);
+            // Get an array of existing Bonds. If no bonds, array size will be 0
+            Bond[] existingBond = findBond(selectedElement, targetElement);
 
             if(existingBond.length == 0)
             {
                 // No bonds exist: create the first bond
-                currentLine.setEndX(targetDot.getCenterX());
-                currentLine.setEndY(targetDot.getCenterY());
-                bonds.add(new Line[]{currentLine}); // Add single bond
+                currentBond.setEndX(targetElement.getCenterX());
+                currentBond.setEndY(targetElement.getCenterY());
+
+                // Set the second element
+                currentBond.setElement2(element);
+
+                // Note 2: see JavaDoc
+                bonds.add(new Bond[]{currentBond}); // Add single bond
                 //debugging
-                for(Line[] bond : bonds)
+                for(Bond[] bond : bonds)
                 {
                     System.out.println(Arrays.toString(bond) + "hehe");
                 }
-                addClickListenerToLine(currentLine, pane); // Add click listener for removal
+                addClickListenerToLine(currentBond, pane); // Add click listener for removal
             }
             else if(existingBond.length == 1)
             {
-                // Single bond exists: create a double bond
+                // Note 3: see JavaDoc
                 pane.getChildren()
-                        .remove(currentLine); // Remove the temporary line
+                        .remove(currentBond);
 
                 // Add a second (parallel) line
-                Line offsetLine = createParallelLine(existingBond[0]);
-                bonds.add(new Line[]{existingBond[0], offsetLine});
+                final Bond offsetDoubleBond;
+                offsetDoubleBond = createParallelLine(existingBond[0], targetElement);//@@@@@@@@@@@@
+
+                bonds.add(new Bond[]{existingBond[0], offsetDoubleBond});
                 //debugging
                 System.out.println("Start second bond: ");
-                for(Line[] bond : bonds)
+                for(Bond[] bond : bonds)
                 {
                     System.out.println(Arrays.toString(bond));
                 }
                 pane.getChildren()
-                        .add(offsetLine);
-                addClickListenerToLine(offsetLine, pane); // Add click listener for removal
+                        .add(offsetDoubleBond);
+                addClickListenerToLine(offsetDoubleBond, pane); // Add click listener for removal
             }
             else if(existingBond.length >= 2)
             {
                 // If two or more bonds exist: reject the action
                 pane.getChildren()
-                        .remove(currentLine); // Remove the redundant line
+                        .remove(currentBond); // Remove the redundant line
             }
         }
         else
         {
             // Remove the temporary line if the connection is invalid
             pane.getChildren()
-                    .remove(currentLine);
+                    .remove(currentBond);
             //debugging
             System.out.println("invalid bonds?: ");
-            for(Line[] bond : bonds)
+            for(Bond[] bond : bonds)
             {
                 System.out.println(Arrays.toString(bond));
             }
         }
 
         // Reset state
-        selectedDot = null;
-        currentLine = null;
+        selectedElement = null;
+        currentBond     = null;
     }
 
     /**
@@ -184,16 +205,16 @@ public class MyGameController
      *
      * @return The dot the mouse is over, or null if none.
      */
-    private Circle getDotAt(double x, double y, Pane pane)
+    private GameElement getDotAt(double x, double y, Pane pane)
     {
         for(final var node : pane.getChildren())
         {
-            if(node instanceof Circle)
+            if(node instanceof GameElement)
             {
-                Circle dot = (Circle) node;
-                if(dot.contains(x, y))
+                GameElement element = (GameElement) node;
+                if(element.contains(x, y))
                 {
-                    return dot;
+                    return element;
                 }
             }
         }
@@ -202,95 +223,102 @@ public class MyGameController
 
     /**
      * Checks if a bond already exists between two dots.
+     * <p>
+     * Note 1: We initially make a List<Bond> because we need to be able to dynamically add or remove Bond objects. We then return it as an array (.toArray) because, logically, we no longer need to dynamically add/remove elements.
+     * <p>
+     * Note 2: .toArray(new Bond[0]) just creates an empty Bond[] array IN THE CASE nothing was added to it. If Bonds were added to it, Java dynamically adjusts array size!
      *
-     * @param dot1 The first dot.
-     * @param dot2 The second dot.
+     * @param e1 The first element.
+     * @param e2 The second element.
      *
      * @return An array of existing lines (bonds) between the dots.
      */
-    private Line[] findBond(Circle dot1, Circle dot2)
+    private Bond[] findBond(GameElement e1, GameElement e2)
     {
-        List<Line> bondsBetween = new ArrayList<>();
+        // Note 1: see JavaDoc
+        final List<Bond> bondsBetween;
+        bondsBetween = new ArrayList<>();
 
-        for(Line[] bondPair : bonds)
+        // TODO: add jason syntax
+        for(final Bond[] bondPair : bonds)
         {
-            for(Line bond : bondPair)
+            for(final Bond bond : bondPair)
             {
-                if((bond.getStartX() == dot1.getCenterX() &&
-                        bond.getStartY() == dot1.getCenterY() &&
-                        bond.getEndX() == dot2.getCenterX() &&
-                        bond.getEndY() == dot2.getCenterY()) ||
-                        (bond.getStartX() == dot2.getCenterX() &&
-                                bond.getStartY() == dot2.getCenterY() &&
-                                bond.getEndX() == dot1.getCenterX() &&
-                                bond.getEndY() == dot1.getCenterY()))
+                // TODO: probably make this a helper method
+                if((bond.getStartX() == e1.getCenterX() &&
+                        bond.getStartY() == e1.getCenterY() &&
+                        bond.getEndX() == e2.getCenterX() &&
+                        bond.getEndY() == e2.getCenterY()) ||
+                        (bond.getStartX() == e2.getCenterX() &&
+                                bond.getStartY() == e2.getCenterY() &&
+                                bond.getEndX() == e1.getCenterX() &&
+                                bond.getEndY() == e1.getCenterY()))
                 {
                     bondsBetween.add(bond);
                 }
             }
         }
 
-        return bondsBetween.toArray(new Line[0]);
+        // Note 2: see JavaDoc
+        return bondsBetween.toArray(new Bond[0]);
     }
 
     /**
-     * Adds a click listener to a line, allowing it to be removed by clicking.
+     * Adds a click listener to a bond, allowing it to be removed by clicking.
      *
-     * @param line The line to add the click listener to.
-     * @param pane The pane where the line is located.
+     * @param bond The bond to add the click listener to.
+     * @param pane The pane where the bond is located.
      */
-    private void addClickListenerToLine(Line line, Pane pane)
+    private void addClickListenerToLine(final Bond bond, final Pane pane)
     {
-        line.setOnMouseClicked(event ->
+        bond.setOnMouseClicked(event ->
                                {
                                    // Remove the bond from the list
-                                   removeBondFromList(line, pane);
+                                   removeBondFromListAndScreen(bond, pane);
 
-                                   //                                   // Remove the clicked line from the pane
-                                   //                                   pane.getChildren()
-                                   //                                           .remove(line);
                                    //debugging
                                    System.out.println("removing bond");
-                                   for(Line[] bond : bonds)
+                                   for(Bond[] currentBond : bonds)
                                    {
-                                       System.out.println(Arrays.toString(bond));
+                                       System.out.println(Arrays.toString(currentBond));
                                    }
                                });
     }
 
     /**
-     * Removes the specified bond (line) from the bond list.
+     * Removes the specified bond (bond) from the bond list.
      *
-     * @param line The line to remove from the bond list.
+     * @param bond The bond to remove from the bond list.
      * @param pane
      */
-    private void removeBondFromList(final Line line, final Pane pane)
+    private void removeBondFromListAndScreen(final Bond bond, final Pane pane)
     {
         // Iterate through the bonds list
-        for(Iterator<Line[]> iter = bonds.iterator(); iter.hasNext(); )
+        for(final Iterator<Bond[]> iter = bonds.iterator(); iter.hasNext(); )
         {
-            Line[] bondPair = iter.next();
+            final Bond[] bondPair;
+            bondPair = iter.next();
 
-            // Check if the line belongs to this bond pair
+            // Check if the bond belongs to this bond pair
             if(Arrays.asList(bondPair)
-                    .contains(line))
+                    .contains(bond))
             {
-                // Extract the coordinates of the line being removed
-                double lineStartX = line.getStartX();
-                double lineStartY = line.getStartY();
-                double lineEndX   = line.getEndX();
-                double lineEndY   = line.getEndY();
+                // Extract the coordinates of the bond being removed
+                double lineStartX = bond.getStartX();
+                double lineStartY = bond.getStartY();
+                double lineEndX   = bond.getEndX();
+                double lineEndY   = bond.getEndY();
 
                 // Check if any other `bondPair` exists between the same coordinates
-                for(Line[] otherBondPair : bonds)
+                for(final Bond[] otherBondPair : bonds)
                 {
                     // Skip the current bondPair
                     if(otherBondPair != bondPair)
                     {
-                        for(final Line otherLine : otherBondPair)
+                        for(final Bond otherBond : otherBondPair)
                         {
                             // Compare coordinates (unordered since bonds are bidirectional)
-                            if(linesConnectSamePoints(lineStartX, lineStartY, lineEndX, lineEndY, otherLine.getStartX(), otherLine.getStartY(), otherLine.getEndX(), otherLine.getEndY()))
+                            if(linesConnectSamePoints(lineStartX, lineStartY, lineEndX, lineEndY, otherBond.getStartX(), otherBond.getStartY(), otherBond.getEndX(), otherBond.getEndY()))
                             {
                                 // Prevent removal if higher-order bonds exist
                                 showErrorPopup("You must remove all higher-order bonds (e.g., double bonds) before removing this bond.");
@@ -303,7 +331,7 @@ public class MyGameController
                 // If valid, remove the bond from the List, and the GUI
                 iter.remove();
                 pane.getChildren()
-                        .remove(line);
+                        .remove(bond);
                 break; // Stop once the bond is found and removed
             }
         }
@@ -332,18 +360,19 @@ public class MyGameController
     }
 
     /**
-     * Creates a parallel line to an existing line, offset by a small value.
+     * Creates a parallel bond to an existing bond, offset by a small value.
      *
-     * @param line The original line.
+     * @param bond          The original bond.
+     * @param targetElement
      *
      * @return A new Line object that is parallel to the original.
      */
-    private Line createParallelLine(Line line)
+    private Bond createParallelLine(Bond bond, final GameElement targetElement)
     {
-        // Calculate offset for parallel line
-        double offset = 5.0;
-        double dx     = line.getEndX() - line.getStartX();
-        double dy     = line.getEndY() - line.getStartY();
+        // Calculate offset for parallel bond
+        double offset = BOND_OFFSET;
+        double dx     = bond.getEndX() - bond.getStartX();
+        double dy     = bond.getEndY() - bond.getStartY();
         double length = Math.sqrt(dx * dx + dy * dy);
 
         // Normalize to get unit vector
@@ -354,10 +383,11 @@ public class MyGameController
         double px = -uy * offset;
         double py = ux * offset;
 
-        // Create parallel line
-        final Line parallelLine = new Line(
-                line.getStartX() + px,
-                line.getStartY() + py, line.getEndX() + px, line.getEndY() + py);
+        // Create parallel bond
+        final Bond parallelLine = new Bond(
+                bond.getStartX() + px,
+                bond.getStartY() + py,
+                bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
         parallelLine.setStrokeWidth(DOUBLE_BOND_WIDTH);
 
         return parallelLine;

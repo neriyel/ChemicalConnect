@@ -16,6 +16,11 @@ public class AminoAcid
 
     }
 
+    /**
+     * Returns a list of GameElements (dots with positions), representing a whole amino acid
+     * @param aminoAcid
+     * @return
+     */
     public List<GameElement> createAminoAcid(final String aminoAcid)
     {
         ElementFactory carbonFactory   = new CarbonFactory();
