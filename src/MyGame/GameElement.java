@@ -7,12 +7,17 @@ import javafx.scene.shape.Circle;
 
 public abstract class GameElement extends Circle
 {
+    private static int   GAME_ELEMENT_STROKEWIDTH   = 3;
+    private static Color GAME_ELEMENT_ENTERED_COLOR = Color.GREY;
+
     private final String elementID;
 
     public GameElement(final String id, final double x, final double y, final double radius, final Color color)
     {
         super(x, y, radius, color);
         this.elementID = id;
+        this.setStrokeWidth(GAME_ELEMENT_STROKEWIDTH);
+        this.setOnMouseEntered(e -> this.setFill(GAME_ELEMENT_ENTERED_COLOR));
     }
 
     abstract public GameElement getElementAt(final MouseEvent x, final MouseEvent y, Pane pane);
@@ -21,6 +26,6 @@ public abstract class GameElement extends Circle
     @Override
     public String toString()
     {
-        return "TestElement";
+        return this.elementID;
     }
 }

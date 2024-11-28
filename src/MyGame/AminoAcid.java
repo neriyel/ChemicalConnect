@@ -29,9 +29,9 @@ public class AminoAcid
      *
      * @param aa
      */
-    public AminoAcid(final String aa)
+    public AminoAcid(final char aa)
     {
-        this.aminoAcid = aa;
+        this.aminoAcid = String.valueOf(aa);
         this.elements  = new ArrayList<>();
 
         createAminoAcid(aminoAcid);
@@ -79,7 +79,6 @@ public class AminoAcid
                 elementPosX    = Double.parseDouble(temp[ELEMENT_X_INDEX]);
                 elementPosY    = Double.parseDouble(temp[ELEMENT_Y_INDEX]);
                 elementCalled  = elementID.charAt(ELEMENT_CHAR_INDEX);
-
 
                 // Determine which element is being called
                 switch(elementCalled)

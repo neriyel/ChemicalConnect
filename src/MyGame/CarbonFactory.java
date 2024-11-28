@@ -1,7 +1,5 @@
 package MyGame;
 
-import javafx.scene.paint.Color;
-
 public class CarbonFactory implements ElementFactory
 {
 

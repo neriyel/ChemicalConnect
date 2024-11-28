@@ -3,15 +3,13 @@ package MyGame;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class MyGameController
 {
@@ -19,11 +17,14 @@ public class MyGameController
     private static       int    SINGLE_BOND_WIDTH = 5;
     private static       int    DOUBLE_BOND_WIDTH = 3;
     private static final double BOND_OFFSET       = 5.0;
+    private static final String AMINO_ACIDS       = "ACDEFGHIKLMNPQRSTVWY";
 
     // Instance variables (non-final)
-    private       GameElement  selectedElement = null;
-    private       Bond         currentBond     = null;
-    private final List<Bond[]> bonds           = new ArrayList<>(); // Track all bonds (single and double)
+    private       AminoAcid              currentAminoAcid;
+    private       ArrayList<GameElement> currentAminoAcidGUI;
+    private       GameElement            selectedElement = null;
+    private       Bond                   currentBond     = null;
+    private final List<Bond[]>           bonds           = new ArrayList<>(); // Track all bonds (single and double)
 
     // FXML Variables
     @FXML
@@ -33,19 +34,22 @@ public class MyGameController
     private Label gameLabel;
 
     @FXML
+    private Button startGame;
+
+    @FXML
+    private Button rules;
+
+    @FXML
     private void initialize()
     {
-        gameLabel.setText("test label THIS ONE");
+        gameLabel.setText("Welcome to Kemical Konnect!");
 
-        AminoAcid              test   = new AminoAcid("A");
-        ArrayList<GameElement> testAA = test.getAminoAcid();
+        startGame = new Button("Start Game!");
+        rules     = new Button("Rules");
 
-        for(final GameElement element : testAA)
-        {
-            addMouseEventHandlers(element, gamePane);
-            gamePane.getChildren()
-                    .add(element); // Add the dot to the pane
-        }
+        startGame.setOnAction(e -> nextQuestion(e));
+        rules.setOnAction(e -> showRules());
+
     }
 
     /**
@@ -124,7 +128,7 @@ public class MyGameController
     {
         // Note 1: see JavaDoc
         final GameElement targetElement;
-        targetElement = (GameElement) getDotAt(event.getX(), event.getY(), pane);
+        targetElement = getDotAt(event.getX(), event.getY(), pane);
 
         if(targetElement != null && targetElement != selectedElement)
         {
@@ -138,7 +142,7 @@ public class MyGameController
                 currentBond.setEndY(targetElement.getCenterY());
 
                 // Set the second element
-                currentBond.setElement2(element);
+                currentBond.setElement2(targetElement);
 
                 // Note 2: see JavaDoc
                 bonds.add(new Bond[]{currentBond}); // Add single bond
@@ -170,7 +174,7 @@ public class MyGameController
                         .add(offsetDoubleBond);
                 addClickListenerToLine(offsetDoubleBond, pane); // Add click listener for removal
             }
-            else if(existingBond.length >= 2)
+            else
             {
                 // If two or more bonds exist: reject the action
                 pane.getChildren()
@@ -390,7 +394,69 @@ public class MyGameController
         return parallelLine;
     }
 
-    public void startGame(final ActionEvent actionEvent)
+    @FXML
+    public void nextQuestion(final ActionEvent actionEvent)
+    {
+        final char nextAA;
+
+        // Remove previous question
+        resetQuestion();
+
+        // Now generate next question
+        nextAA              = generateRandomAA();
+        currentAminoAcid    = new AminoAcid(nextAA);
+        currentAminoAcidGUI = currentAminoAcid.getAminoAcid();
+
+        for(final GameElement element : currentAminoAcidGUI)
+        {
+            addMouseEventHandlers(element, gamePane);
+            gamePane.getChildren()
+                    .add(element); // Add the dot to the pane
+        }
+    }
+
+    private void resetQuestion()
+    {
+        currentAminoAcid = null;
+        if(currentAminoAcidGUI != null)
+        {
+            for(final GameElement element : currentAminoAcidGUI)
+            {
+                gamePane.getChildren()
+                        .remove(element);
+            }
+            currentAminoAcidGUI.clear();
+        }
+
+        if(bonds != null)
+        {
+            for(final Bond[] bond : bonds)
+            {
+                for(final Bond bond1 : bond)
+                {
+                    gamePane.getChildren()
+                            .remove(bond1);
+                }
+            }
+            bonds.clear();
+        }
+    }
+
+    private char generateRandomAA()
+    {
+        final Random random;
+        final char   nextAA;
+
+        random = new Random();
+        nextAA = AMINO_ACIDS.charAt(random.nextInt(AMINO_ACIDS.length()));
+
+        System.out.println("Randomly generated amino acid: " + nextAA);
+
+        return nextAA;
+    }
+
+    @FXML
+    private void showRules()
     {
     }
 }

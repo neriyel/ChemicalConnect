@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <StackPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="MyGame.MyGameController">
-    <!--VBox for the label at the top-->
-    <VBox alignment="TOP_CENTER" spacing="10">
-        <Label fx:id="gameLabel" text="this label should NOT show up: "/>
+
+    <!-- Main vertical layout -->
+    <VBox alignment="CENTER" spacing="20" maxWidth="Infinity" maxHeight="Infinity">
+
+        <!-- Label at the top -->
+        <Label fx:id="gameLabel" text="Welcome to Kemical Konnect!"/>
+
+        <!-- Pane for drawing area -->
+        <Pane fx:id="gamePane" prefHeight="500" prefWidth="400" style="-fx-background-color: lightblue; -fx-border-color: black;" />
+
+        <!-- Buttons at the bottom -->
+        <HBox alignment="CENTER" spacing="10">
+            <Button fx:id="startGame" text="Start Game!" onAction="#nextQuestion"/>
+            <Button fx:id="rules" text="Rules" onAction="#showRules"/>
+        </HBox>
+
     </VBox>
-
-    <!--Pane for drawing area-->
-    <Pane fx:id="gamePane" prefHeight="696" prefWidth="420" maxWidth="Infinity" maxHeight="Infinity">
-        <!--Dots will be loaded here-->
-    </Pane>
-
-    <!--    <Button text="Start" fx:id="startButton" onAction="#startGame"/>-->
 
 </StackPane>
