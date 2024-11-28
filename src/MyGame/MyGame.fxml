@@ -25,6 +25,7 @@
         <!-- GAME Buttons at the bottom -->
         <HBox fx:id="gameButtonHBox" alignment="CENTER" spacing="10">
             <Button fx:id="submit" text="Submit" onAction="#nextQuestion"/>
+            <Button fx:id="endSession" text="Quit" onAction="#endSession"/>
         </HBox>
 
     </VBox>

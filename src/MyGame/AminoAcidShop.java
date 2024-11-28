@@ -13,15 +13,80 @@ import java.util.stream.Stream;
 public class AminoAcidShop
 {
     // Static variables
-    private static String AA_IDENTIFIER = "[A-Z]";
+    private static String AA_IDENTIFIER        = "[A-Z]";
+    private static int    FIRST_ELEMENT_INDEX  = 0;
+    private static int    SECOND_ELEMENT_INDEX = 1;
 
     // Instance variables (non-final)
-    private Map<String, ArrayList<String>> aminoAcidReferences;
+    private final Map<String, ArrayList<String>>   aminoAcidReferences;
+    private final Map<String, ArrayList<String[]>> answerKey;
 
     public AminoAcidShop()
     {
         this.aminoAcidReferences = new HashMap<>();
+        this.answerKey           = new HashMap<>();
         populateAminoAcids();
+        populateAminoAcidsAnswerKey();
+    }
+
+    private void populateAminoAcidsAnswerKey()
+    {
+        try
+        {
+            final Path           inputFile;
+            final List<String>   tempList;
+            final Stream<String> lines;
+
+            inputFile = Paths.get("src", "MyGame", "answer.txt");
+            tempList  = Files.readAllLines(inputFile);
+            lines     = acidStream(tempList);
+
+            // Parse file, and store in answerKey Map for each amino acid
+            String currentAminoAcid = null;
+
+            for(final String line : lines.toList())
+            {
+                // If new amino acid detected, input new Map Key
+                if(line.matches(AA_IDENTIFIER))
+                {
+                    currentAminoAcid = line;
+                    answerKey.put(currentAminoAcid, new ArrayList<>());
+                }
+                else if(currentAminoAcid != null)
+                {
+
+                    String[] tempAnswerKeyValue;
+                    String[] tempBuffer;
+
+                    tempAnswerKeyValue = new String[2];
+                    tempBuffer         = line.split(" ", 2);
+
+                    // Else continue adding to current amino acid's Map Value
+                    tempAnswerKeyValue[FIRST_ELEMENT_INDEX]  = tempBuffer[FIRST_ELEMENT_INDEX];
+                    tempAnswerKeyValue[SECOND_ELEMENT_INDEX] = tempBuffer[SECOND_ELEMENT_INDEX];
+
+                    // Add bond connections to Map's value
+                    answerKey.get(currentAminoAcid).add(tempAnswerKeyValue);
+                }
+            }
+        }
+        catch(final IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        //debugging
+        System.out.println("INSIDE POPULATE ANSWER KEY!!!!");
+        for(Map.Entry<String, ArrayList<String[]>> entry : answerKey.entrySet())
+        {
+            System.out.print(entry.getKey() + ": ");
+
+            // Loop through the ArrayList
+            for(String[] array : entry.getValue())
+            {
+                System.out.println(Arrays.toString(array));  // Print each String[] as a string
+            }
+        }
     }
 
     /**
@@ -56,17 +121,16 @@ public class AminoAcidShop
                 else if(currentAminoAcid != null)
                 {
                     // Else continue adding to current amino acid's Map Value
-                    aminoAcidReferences.get(currentAminoAcid)
-                            .add(line);
+                    aminoAcidReferences.get(currentAminoAcid).add(line);
                 }
 
             }
 
             //debugging
-//            for(Map.Entry<String, ArrayList<String>> entry : aminoAcidReferences.entrySet())
-//            {
-//                System.out.println(entry.getKey() + ": " + entry.getValue());
-//            }
+            //            for(Map.Entry<String, ArrayList<String>> entry : aminoAcidReferences.entrySet())
+            //            {
+            //                System.out.println(entry.getKey() + ": " + entry.getValue());
+            //            }
 
         }
         catch(final IOException e)
@@ -84,8 +148,7 @@ public class AminoAcidShop
      */
     private Stream<String> acidStream(final List<String> tempList)
     {
-        return tempList.stream()
-                .filter(Objects::nonNull);
+        return tempList.stream().filter(Objects::nonNull);
     }
 
     /**
@@ -95,7 +158,7 @@ public class AminoAcidShop
      */
     public ArrayList<String> getAminoAcidAsMapValue(final String aa)
     {
-        System.out.println("Inside getAAAsMapValue: " + aminoAcidReferences.get(aa));
+//        System.out.println("Inside getAAAsMapValue: " + aminoAcidReferences.get(aa));
         return aminoAcidReferences.get(aa);
     }
 

@@ -1,6 +1,7 @@
 package MyGame;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Represents a single Amino Acid. The specific amino acid is determined when it is instantiated.
@@ -21,8 +22,10 @@ public class AminoAcid
     private static final char SULPHUR_ID  = 'S';
 
     // Instance variables (final)
-    private final String                 aminoAcid;
-    private       ArrayList<GameElement> elements;
+    private final String aminoAcid;
+
+    // Instance variables (non-final)
+    private ArrayList<GameElement>           elements;
 
     /**
      * Constructor
@@ -35,6 +38,17 @@ public class AminoAcid
         this.elements  = new ArrayList<>();
 
         createAminoAcid(aminoAcid);
+        createAnswerKey(aminoAcid);
+    }
+
+    /**
+     * populates the answerKey map, for example [A: [DC1, DC2], [DN1, DC1]]
+     *
+     * @param aminoAcid
+     */
+    private void createAnswerKey(final String aminoAcid)
+    {
+
     }
 
     /**
@@ -97,7 +111,7 @@ public class AminoAcid
     public ArrayList<GameElement> getAminoAcid()
     {
         // debugging
-        System.out.println("inside getAminoAcid" + this.elements);
+//        System.out.println("inside getAminoAcid" + this.elements);
         return this.elements;
     }
 
