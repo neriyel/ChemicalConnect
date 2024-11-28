@@ -13,9 +13,9 @@ public class Carbon extends GameElement
 
     // Instance variables (final)
 
-    public Carbon(final double x, final double y)
+    public Carbon(final String id, final double x, final double y)
     {
-        super(x, y, CARBON_RADIUS, CARBON_COLOR);
+        super(id, x, y, CARBON_RADIUS, CARBON_COLOR);
 
         //TODO: probably make below helper method
         this.setStroke(Color.DARKBLUE);

@@ -6,10 +6,9 @@ public class CarbonFactory implements ElementFactory
 {
 
     @Override
-    public GameElement createElement(final double x, final double y)
+    public GameElement createElement(final String id, final double x, final double y)
     {
-        GameElement carbon = new Carbon(x, y);
-        return carbon;
+        return new Carbon(id, x, y);
     }
 
 }

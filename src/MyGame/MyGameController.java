@@ -37,8 +37,8 @@ public class MyGameController
     {
         gameLabel.setText("test label THIS ONE");
 
-        AminoAcid         test   = new AminoAcid("test");
-        List<GameElement> testAA = test.getAminoAcidElements();
+        AminoAcid              test   = new AminoAcid("A");
+        ArrayList<GameElement> testAA = test.getAminoAcid();
 
         for(final GameElement element : testAA)
         {
@@ -52,7 +52,6 @@ public class MyGameController
      * Sets up event handlers on GameElements for interactions.
      *
      * @param pane The pane where the dot will be added.
-     *
      */
     private void addMouseEventHandlers(GameElement element, Pane pane)
     {
@@ -245,10 +244,8 @@ public class MyGameController
             for(final Bond bond : bondPair)
             {
                 // TODO: probably make this a helper method
-                if((bond.getStartX() == e1.getCenterX() &&
-                        bond.getStartY() == e1.getCenterY() &&
-                        bond.getEndX() == e2.getCenterX() &&
-                        bond.getEndY() == e2.getCenterY()) ||
+                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() &&
+                        bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) ||
                         (bond.getStartX() == e2.getCenterX() &&
                                 bond.getStartY() == e2.getCenterY() &&
                                 bond.getEndX() == e1.getCenterX() &&

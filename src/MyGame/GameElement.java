@@ -7,9 +7,12 @@ import javafx.scene.shape.Circle;
 
 public abstract class GameElement extends Circle
 {
-    public GameElement(final double x, final double y, final double radius, final Color color)
+    private final String elementID;
+
+    public GameElement(final String id, final double x, final double y, final double radius, final Color color)
     {
         super(x, y, radius, color);
+        this.elementID = id;
     }
 
     abstract public GameElement getElementAt(final MouseEvent x, final MouseEvent y, Pane pane);
