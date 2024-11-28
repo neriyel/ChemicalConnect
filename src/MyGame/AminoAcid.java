@@ -105,4 +105,9 @@ public class AminoAcid
     {
         // list of correct bonds
     }
+
+    public String getAminoAcidID()
+    {
+        return this.aminoAcid;
+    }
 }

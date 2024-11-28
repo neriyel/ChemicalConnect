@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -18,17 +19,32 @@ public class MyGameController
     private static       int    DOUBLE_BOND_WIDTH = 3;
     private static final double BOND_OFFSET       = 5.0;
     private static final String AMINO_ACIDS       = "ACDEFGHIKLMNPQRSTVWY";
+    private static final int    LENGTH_USER_BONDS = 2; // 2 because a bond holds 2 elements
+
+    private static final int SINGLE_BOND_LENGTH = 1;
+    private static final int DOUBLE_BOND_LENGTH = 2;
+    private static final int SINGLE_BOND_INDEX  = 0;
+    private static final int DOUBLE_BOND_INDEX  = 1;
 
     // Instance variables (non-final)
-    private       AminoAcid              currentAminoAcid;
-    private       ArrayList<GameElement> currentAminoAcidGUI;
-    private       GameElement            selectedElement = null;
-    private       Bond                   currentBond     = null;
-    private final List<Bond[]>           bonds           = new ArrayList<>(); // Track all bonds (single and double)
+    private AminoAcid              currentAminoAcid;
+    private ArrayList<GameElement> currentAminoAcidGUI;
+    private GameElement            selectedElement;
+    private Bond                   currentBond;
+
+    // Instance variables (final)
+    private List<Bond[]>                     bonds; // Track all bonds (single and double)
+    private Map<String, ArrayList<String[]>> usersAnswers;
 
     // FXML Variables
     @FXML
     private Pane gamePane;
+
+    @FXML
+    private HBox homeButtonHbox;
+
+    @FXML
+    private HBox gameButtonHBox;
 
     @FXML
     private Label gameLabel;
@@ -40,15 +56,26 @@ public class MyGameController
     private Button rules;
 
     @FXML
+    private Button submit;
+
+    @FXML
     private void initialize()
     {
-        gameLabel.setText("Welcome to Kemical Konnect!");
+        // Instantiate _____
+        usersAnswers = new HashMap<>();
+        bonds        = new ArrayList<>();
 
-        startGame = new Button("Start Game!");
-        rules     = new Button("Rules");
+        // Hide game buttons
+        gameButtonHBox.setVisible(false);
+
+        gameLabel.setText("Welcome to Khemical Konnect!");
 
         startGame.setOnAction(e -> nextQuestion(e));
         rules.setOnAction(e -> showRules());
+        submit.setOnAction(e -> submitEvent(e));
+
+        //debugg
+        System.out.println("inside initilize: " + bonds);
 
     }
 
@@ -397,14 +424,15 @@ public class MyGameController
     @FXML
     public void nextQuestion(final ActionEvent actionEvent)
     {
-        final char nextAA;
+        // Hide home buttons | Show game buttons
+        removeHomeButtons();
+        gameButtonHBox.setVisible(true);
 
-        // Remove previous question
+        // Remove previous question (bonds, currentAminoAcid)
         resetQuestion();
 
         // Now generate next question
-        nextAA              = generateRandomAA();
-        currentAminoAcid    = new AminoAcid(nextAA);
+        currentAminoAcid    = new AminoAcid(generateRandomAA());
         currentAminoAcidGUI = currentAminoAcid.getAminoAcid();
 
         for(final GameElement element : currentAminoAcidGUI)
@@ -415,6 +443,17 @@ public class MyGameController
         }
     }
 
+    private void removeHomeButtons()
+    {
+        if(homeButtonHbox != null)
+        {
+            homeButtonHbox.setVisible(false);
+        }
+    }
+
+    /**
+     * Removes current AminoAcid and Bonds from screen
+     */
     private void resetQuestion()
     {
         currentAminoAcid = null;
@@ -440,6 +479,89 @@ public class MyGameController
             }
             bonds.clear();
         }
+    }
+
+    /**
+     * When user hits submit button. Save amino acid,
+     */
+    private void submitEvent(final ActionEvent e)
+    {
+        // userKey: Amino Acid ID | userValuePlaceholder: Array of bonds ex [TC1, TN1]
+        final String              userKey;
+        final ArrayList<String[]> tempMapValues;
+        String[]                  userValuePlaceholder;
+
+        userKey              = currentAminoAcid.getAminoAcidID();
+        tempMapValues        = new ArrayList<>();
+        userValuePlaceholder = new String[LENGTH_USER_BONDS];
+
+        if(bonds!= null && !bonds.isEmpty())
+        {
+            for(final Bond[] bond : bonds)
+            {
+                if(bond.length == SINGLE_BOND_LENGTH)
+                {
+                    // Store element1 and element2 in temp String[]
+                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1()
+                            .toString();
+                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement1()
+                            .toString();
+                    // Add to tempMapValue Array
+                    tempMapValues.add(userValuePlaceholder);
+                }
+                else if(bond.length == DOUBLE_BOND_LENGTH)
+                {
+                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1()
+                            .toString();
+                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement1()
+                            .toString();
+                    // Add to tempMapValue Array
+                    tempMapValues.add(userValuePlaceholder);
+                }
+            }
+
+            usersAnswers.put(currentAminoAcid.getAminoAcidID(), tempMapValues);
+
+            //debugging
+            for(Map.Entry<String, ArrayList<String[]>> entry : usersAnswers.entrySet())
+            {
+                System.out.print("INSIDE SUBMIT EVENT!!!!" + entry.getKey() + ": ");
+
+                // Loop through the ArrayList
+                for(String[] array : entry.getValue())
+                {
+                    System.out.println(Arrays.toString(array));  // Print each String[] as a string
+                }
+            }
+
+            // Call next question after storing user results
+            nextQuestion(e);
+        }
+        else
+        {
+            mustSubmitAnswerError();
+        }
+
+    }
+
+    private void mustSubmitAnswerError()
+    {
+
+        // Create a new Alert of type ERROR
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        // Set the title of the popup
+        alert.setTitle("Error");
+
+        // Set the header text (optional)
+        alert.setHeaderText("An error has occurred");
+
+        // Set the content text to the error message
+        alert.setContentText("errorMessage");
+
+        // Show the alert and wait for the user to close it
+        alert.showAndWait();
+
     }
 
     private char generateRandomAA()

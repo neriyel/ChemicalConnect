@@ -16,10 +16,15 @@
         <!-- Pane for drawing area -->
         <Pane fx:id="gamePane" prefHeight="500" prefWidth="400" style="-fx-background-color: lightblue; -fx-border-color: black;" />
 
-        <!-- Buttons at the bottom -->
-        <HBox alignment="CENTER" spacing="10">
+        <!-- HOME Buttons at the bottom -->
+        <HBox fx:id="homeButtonHbox" alignment="CENTER" spacing="10">
             <Button fx:id="startGame" text="Start Game!" onAction="#nextQuestion"/>
             <Button fx:id="rules" text="Rules" onAction="#showRules"/>
+        </HBox>
+
+        <!-- GAME Buttons at the bottom -->
+        <HBox fx:id="gameButtonHBox" alignment="CENTER" spacing="10">
+            <Button fx:id="submit" text="Submit" onAction="#nextQuestion"/>
         </HBox>
 
     </VBox>

@@ -63,10 +63,10 @@ public class AminoAcidShop
             }
 
             //debugging
-            for(Map.Entry<String, ArrayList<String>> entry : aminoAcidReferences.entrySet())
-            {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
-            }
+//            for(Map.Entry<String, ArrayList<String>> entry : aminoAcidReferences.entrySet())
+//            {
+//                System.out.println(entry.getKey() + ": " + entry.getValue());
+//            }
 
         }
         catch(final IOException e)
