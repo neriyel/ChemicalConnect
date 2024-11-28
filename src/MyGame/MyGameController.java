@@ -38,7 +38,7 @@ public class MyGameController
         gameLabel.setText("test label THIS ONE");
 
         AminoAcid         test   = new AminoAcid("test");
-        List<GameElement> testAA = test.createAminoAcid("test");
+        List<GameElement> testAA = test.getAminoAcidElements();
 
         for(final GameElement element : testAA)
         {

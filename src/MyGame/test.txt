@@ -1,0 +1,9 @@
+A
+Alanine
+AC1 100 100
+AC2 200 100
+AC3 100 200
+R
+Arginine
+RC1 50 300
+RC2 300 50
