@@ -540,13 +540,13 @@ public class MyGameController
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
         // Set the title of the popup
-        alert.setTitle("Error");
+        alert.setTitle("Cannot submit a blank answer!");
 
         // Set the header text (optional)
-        alert.setHeaderText("An error has occurred");
+        alert.setHeaderText("Cannot submit a blank answer!");
 
         // Set the content text to the error message
-        alert.setContentText("errorMessage");
+        alert.setContentText("Cannot submit a blank answer!");
 
         // Show the alert and wait for the user to close it
         alert.showAndWait();
@@ -577,13 +577,102 @@ public class MyGameController
         // remove buttons (submit)
         gameButtonHBox.setVisible(false);
         removeQuestion();
+        checkAllResponses();
 
         // display results
     }
 
-    public void compareResponses()
+
+    public boolean checkAllResponses()
+    {
+        // Flatten and normalize answer key
+        Map<String, List<Set<String>>> normalizedAnswerKey;
+        Map<String, List<Set<String>>> normalizedUserResponses;
+
+        // Get answer key from aminoAcidShop
+
+        AminoAcidShop shop;
+        shop = new AminoAcidShop();
+
+        normalizedAnswerKey     = flattenBonds(shop.getAnswerKey());
+        normalizedUserResponses = flattenBonds(usersAnswers);
+
+        // Compare the keys
+        if(!normalizedAnswerKey.keySet().equals(normalizedUserResponses.keySet()))
+        {
+            return false;
+        }
+
+        // Compare the bond lists for each key
+        for(final String key : normalizedAnswerKey.keySet())
+        {
+            List<Set<String>> expectedBonds;
+            List<Set<String>> userBonds;
+
+            expectedBonds = normalizedAnswerKey.get(key);
+            userBonds     = normalizedUserResponses.get(key);
+
+            if(expectedBonds.size() != userBonds.size() || !userBonds.containsAll(expectedBonds))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Takes the answerKey and userResponses and FLATTENS it for easier comparison:
+     * <p>
+     * Flattens this Map type:  Map<String, ArrayList<String[]> ---to---> Map<String, ArrayList<String>>
+     *
+     * @param bonds
+     *
+     * @return
+     */
+    public Map<String, List<Set<String>>> flattenBonds(final Map<String, ArrayList<String[]>> bonds)
     {
 
+        Map<String, List<Set<String>>> flattened;
+        flattened = new HashMap<>();
+
+        for(final Map.Entry<String, ArrayList<String[]>> entry : bonds.entrySet())
+        {
+            String              key;
+            ArrayList<String[]> bondPairs;
+            List<Set<String>>   bondListPlaceholder;
+
+            key                 = entry.getKey();
+            bondPairs           = entry.getValue();
+            bondListPlaceholder = new ArrayList<>();
+
+            // Iterate through all Map Values and flatten to List<String>
+            for(final String[] pair : bondPairs)
+            {
+                // Add each pair to the placeholder list
+                bondListPlaceholder.add(new HashSet<>(Arrays.asList(pair)));
+            }
+
+            flattened.put(key, bondListPlaceholder);
+        }
+
+        //debugging
+        System.out.println("INSIDE FLATTENBONDS");
+        for(Map.Entry<String, List<Set<String>>> goat : flattened.entrySet())
+        {
+            String            key1     = goat.getKey();
+            List<Set<String>> bondList = goat.getValue();
+
+            System.out.println("Key: " + key1);
+            System.out.println("Bonds:");
+            for(Set<String> bond : bondList)
+            {
+                System.out.println("  " + bond);
+            }
+            System.out.println(); // Add space between entries for readability
+        }
+
+        return flattened;
     }
 }
+
 

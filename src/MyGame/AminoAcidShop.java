@@ -158,8 +158,13 @@ public class AminoAcidShop
      */
     public ArrayList<String> getAminoAcidAsMapValue(final String aa)
     {
-//        System.out.println("Inside getAAAsMapValue: " + aminoAcidReferences.get(aa));
+        //        System.out.println("Inside getAAAsMapValue: " + aminoAcidReferences.get(aa));
         return aminoAcidReferences.get(aa);
+    }
+
+    public Map<String, ArrayList<String[]>> getAnswerKey()
+    {
+        return answerKey;
     }
 
 }
