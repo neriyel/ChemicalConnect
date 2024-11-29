@@ -79,7 +79,7 @@ public class MyGameController
         submit.setOnAction(e -> submitEvent(e));
 
         //debugg
-//        System.out.println("inside initilize: " + bonds);
+        //        System.out.println("inside initilize: " + bonds);
 
     }
 
@@ -468,23 +468,30 @@ public class MyGameController
     }
 
     /**
-     * When user hits submit button. Save amino acid,
+     * When user hits submit button. Save amino acid
+     * <p>
+     * Note 1: Even though you're adding userValuePlaceholder to tempMapValues before overwriting the next bond, the
+     * list is storing a reference to the same array object, not a copy of its contents. Updating the
+     * placeholder affects all the entries in the list that references it.
      */
     private void submitEvent(final ActionEvent e)
     {
         // userKey: Amino Acid ID | userValuePlaceholder: Array of bonds ex [TC1, TN1]
         final String              userKey;
         final ArrayList<String[]> tempMapValues;
-        String[]                  userValuePlaceholder;
 
-        userKey              = currentAminoAcid.getAminoAcidID();
-        tempMapValues        = new ArrayList<>();
-        userValuePlaceholder = new String[LENGTH_USER_BONDS];
+        userKey       = currentAminoAcid.getAminoAcidID();
+        tempMapValues = new ArrayList<>();
 
         if(bonds != null && !bonds.isEmpty())
         {
+
             for(final Bond[] bond : bonds)
             {
+                // Note 1: See javaDoc
+                String[] userValuePlaceholder;
+                userValuePlaceholder = new String[LENGTH_USER_BONDS];
+
                 if(bond.length == SINGLE_BOND_LENGTH)
                 {
                     // Store element1 and element2 in temp String[]
@@ -510,7 +517,7 @@ public class MyGameController
                 System.out.print("INSIDE SUBMIT EVENT!!!!" + entry.getKey() + ": ");
 
                 // Loop through the ArrayList
-                for(String[] array : entry.getValue())
+                for(final String[] array : entry.getValue())
                 {
                     System.out.println(Arrays.toString(array));  // Print each String[] as a string
                 }
@@ -554,7 +561,7 @@ public class MyGameController
         random = new Random();
         nextAA = AMINO_ACIDS.charAt(random.nextInt(AMINO_ACIDS.length()));
 
-//        System.out.println("Randomly generated amino acid: " + nextAA);
+        //        System.out.println("Randomly generated amino acid: " + nextAA);
 
         return nextAA;
     }
