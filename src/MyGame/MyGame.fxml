@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 
 <StackPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="MyGame.MyGameController">
+           fx:controller="MyGame.MyGameController" stylesheets="@MyGameStyle.css">
 
     <!-- Main vertical layout -->
     <VBox alignment="CENTER" spacing="20" maxWidth="Infinity" maxHeight="Infinity">
@@ -13,8 +13,19 @@
         <!-- Label at the top -->
         <Label fx:id="gameLabel" text="Welcome to Kemical Konnect!"/>
 
-        <!-- Pane for drawing area -->
-        <Pane fx:id="gamePane" prefHeight="500" prefWidth="400" style="-fx-background-color: lightblue; -fx-border-color: black;" />
+        <!-- Pane for drawing area NOTE: CIRCLES' Y POSITION MUST BE WITHIN PREFHEIGHT - RADIUS -->
+        <Pane fx:id="gamePane" prefHeight="500" prefWidth="20">
+            <StackPane alignment="CENTER" prefHeight="500" prefWidth="400">
+                <!-- RESULTS display -->
+                <VBox fx:id="resultsPanelVBox" alignment="CENTER" spacing="10" visible="false">
+                    <Label fx:id="scoreLabel" text=""/>
+                    <Label fx:id="scorePercentLabel" text=""/>
+                    <Label fx:id="scoreDetailsLabel" text=""/>
+                    <Button fx:id="tryAgain" text="Try Again" onAction="#restartGame"/>
+                    <Button fx:id="exit" text="Exit" onAction="#closeApplication"/>
+                </VBox>
+            </StackPane>
+        </Pane>
 
         <!-- HOME Buttons at the bottom -->
         <HBox fx:id="homeButtonHbox" alignment="CENTER" spacing="10">

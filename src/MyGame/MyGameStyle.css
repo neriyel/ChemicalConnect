@@ -1,0 +1,31 @@
+
+.root {
+    -fx-background-color: darkslateblue;
+    -fx-font-size: 18px;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.button {
+    -fx-background-color: #333;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+}
+
+.button:hover {
+    -fx-background-color: #444;
+}
+
+#gamePane {
+    -fx-background-color: lavender;
+}
+
+#resultsPanelVBox .label {
+    -fx-text-fill: darkslateblue;
+}
+
+.line {
+    -fx-stroke: white;
+}

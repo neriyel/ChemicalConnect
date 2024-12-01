@@ -54,9 +54,9 @@ public class AminoAcidShop
                 }
                 else if(currentAminoAcid != null)
                 {
-
-                    String[] tempAnswerKeyValue;
-                    String[] tempBuffer;
+                    final Bond bond;
+                    String[]   tempAnswerKeyValue;
+                    String[]   tempBuffer;
 
                     tempAnswerKeyValue = new String[2];
                     tempBuffer         = line.split(" ", 2);
@@ -66,7 +66,8 @@ public class AminoAcidShop
                     tempAnswerKeyValue[SECOND_ELEMENT_INDEX] = tempBuffer[SECOND_ELEMENT_INDEX];
 
                     // Add bond connections to Map's value
-                    answerKey.get(currentAminoAcid).add(tempAnswerKeyValue);
+                    answerKey.get(currentAminoAcid)
+                            .add(tempAnswerKeyValue);
                 }
             }
         }
@@ -76,17 +77,17 @@ public class AminoAcidShop
         }
 
         //debugging
-        System.out.println("INSIDE POPULATE ANSWER KEY!!!!");
-        for(Map.Entry<String, ArrayList<String[]>> entry : answerKey.entrySet())
-        {
-            System.out.print(entry.getKey() + ": ");
-
-            // Loop through the ArrayList
-            for(String[] array : entry.getValue())
-            {
-                System.out.println(Arrays.toString(array));  // Print each String[] as a string
-            }
-        }
+//        System.out.println("INSIDE POPULATE ANSWER KEY!!!!");
+//        for(Map.Entry<String, ArrayList<String[]>> entry : answerKey.entrySet())
+//        {
+//            System.out.print(entry.getKey() + ": ");
+//
+//            // Loop through the ArrayList
+//            for(String[] array : entry.getValue())
+//            {
+//                System.out.println(Arrays.toString(array));  // Print each String[] as a string
+//            }
+//        }
     }
 
     /**
@@ -121,7 +122,8 @@ public class AminoAcidShop
                 else if(currentAminoAcid != null)
                 {
                     // Else continue adding to current amino acid's Map Value
-                    aminoAcidReferences.get(currentAminoAcid).add(line);
+                    aminoAcidReferences.get(currentAminoAcid)
+                            .add(line);
                 }
 
             }
@@ -148,7 +150,8 @@ public class AminoAcidShop
      */
     private Stream<String> acidStream(final List<String> tempList)
     {
-        return tempList.stream().filter(Objects::nonNull);
+        return tempList.stream()
+                .filter(Objects::nonNull);
     }
 
     /**

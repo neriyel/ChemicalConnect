@@ -1,7 +1,6 @@
 package MyGame;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Represents a single Amino Acid. The specific amino acid is determined when it is instantiated.
@@ -38,17 +37,6 @@ public class AminoAcid
         this.elements  = new ArrayList<>();
 
         createAminoAcid(aminoAcid);
-        createAnswerKey(aminoAcid);
-    }
-
-    /**
-     * populates the answerKey map, for example [A: [DC1, DC2], [DN1, DC1]]
-     *
-     * @param aminoAcid
-     */
-    private void createAnswerKey(final String aminoAcid)
-    {
-
     }
 
     /**
@@ -108,7 +96,7 @@ public class AminoAcid
 
     }
 
-    public ArrayList<GameElement> getAminoAcid()
+    public ArrayList<GameElement> getAminoAcidElements()
     {
         // debugging
 //        System.out.println("inside getAminoAcid" + this.elements);
@@ -123,5 +111,38 @@ public class AminoAcid
     public String getAminoAcidID()
     {
         return this.aminoAcid;
+    }
+
+    public AminoAcid getAminoAcid(final String key)
+    {
+        return new AminoAcid(key.charAt(0));
+    }
+
+    @Override
+    public String toString() {
+        return switch(String.valueOf(this.getAminoAcidID()))
+        {
+            case "A" -> "Alanine";
+            case "R" -> "Arginine";
+            case "N" -> "Asparagine";
+            case "D" -> "Aspartic acid";
+            case "C" -> "Cysteine";
+            case "E" -> "Glutamic acid";
+            case "Q" -> "Glutamine";
+            case "G" -> "Glycine";
+            case "H" -> "Histidine";
+            case "I" -> "Isoleucine";
+            case "L" -> "Leucine";
+            case "K" -> "Lysine";
+            case "M" -> "Methionine";
+            case "F" -> "Phenylalanine";
+            case "P" -> "Proline";
+            case "S" -> "Serine";
+            case "T" -> "Threonine";
+            case "W" -> "Tryptophan";
+            case "Y" -> "Tyrosine";
+            case "V" -> "Valine";
+            default -> "Unknown amino acid";
+        };
     }
 }

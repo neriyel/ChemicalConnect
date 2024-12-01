@@ -62,59 +62,59 @@ public class Bond extends Line
                              e2 != null ? e2.toString() : "null");
     }
 
-    @Override
-    public boolean equals(final Object that)
-    {
-        if(that == null)
-        {
-            return false;
-        }
-
-        if(that instanceof Bond)
-        {
-            // this Bond's coordinates
-            //            final double thisBondX1;
-            //            final double thisBondY1;
-            //            final double thisBondX2;
-            //            final double thisBondY2;
-            //
-            //            // that Bond's coordinates
-            //            final double thatBondX1;
-            //            final double thatBondY1;
-            //            final double thatBondX2;
-            //            final double thatBondY2;
-            //
-            //            thisBondX1 = this.getStartX();
-            //            thisBondY1 = this.getStartY();
-            //            thisBondX2 = this.getEndX();
-            //            thisBondY2 = this.getEndY();
-            //
-            //            thatBondX1 = this.getStartX();
-            //            thatBondY1 = this.getStartY();
-            //            thatBondX2 = this.getEndX();
-            //            thatBondY2 = this.getEndY();
-
-            final String thisElement1;
-            final String thisElement2;
-            final String thatElement1;
-            final String  thatElement2;
-            final boolean result;
-
-            thisElement1 = this.getElement1().toString();
-            thisElement2 = this.getElement2().toString();
-            thatElement1 = this.getElement1().toString();
-            thatElement2 = this.getElement2().toString();
-
-            // Returns equality in any order: Ie [A,B] == [B,A]
-            result = thisElement1.equals(thatElement1) && thisElement2.equals(thatElement2) ||
-                    thisElement1.equals(thatElement2) && thatElement2.equals(thatElement1);
-
-            return result;
-        }
-
-        // that is not instanceOf Bond
-        return false;
-    }
+//    @Override
+//    public boolean equals(final Object that)
+//    {
+//        if(that == null)
+//        {
+//            return false;
+//        }
+//
+//        if(that instanceof Bond)
+//        {
+//            // this Bond's coordinates
+//            //            final double thisBondX1;
+//            //            final double thisBondY1;
+//            //            final double thisBondX2;
+//            //            final double thisBondY2;
+//            //
+//            //            // that Bond's coordinates
+//            //            final double thatBondX1;
+//            //            final double thatBondY1;
+//            //            final double thatBondX2;
+//            //            final double thatBondY2;
+//            //
+//            //            thisBondX1 = this.getStartX();
+//            //            thisBondY1 = this.getStartY();
+//            //            thisBondX2 = this.getEndX();
+//            //            thisBondY2 = this.getEndY();
+//            //
+//            //            thatBondX1 = this.getStartX();
+//            //            thatBondY1 = this.getStartY();
+//            //            thatBondX2 = this.getEndX();
+//            //            thatBondY2 = this.getEndY();
+//
+//            final String thisElement1;
+//            final String thisElement2;
+//            final String thatElement1;
+//            final String  thatElement2;
+//            final boolean result;
+//
+//            thisElement1 = this.getElement1().toString();
+//            thisElement2 = this.getElement2().toString();
+//            thatElement1 = this.getElement1().toString();
+//            thatElement2 = this.getElement2().toString();
+//
+//            // Returns equality in any order: Ie [A,B] == [B,A]
+//            result = thisElement1.equals(thatElement1) && thisElement2.equals(thatElement2) ||
+//                    thisElement1.equals(thatElement2) && thatElement2.equals(thatElement1);
+//
+//            return result;
+//        }
+//
+//        // that is not instanceOf Bond
+//        return false;
+//    }
 
 }
 

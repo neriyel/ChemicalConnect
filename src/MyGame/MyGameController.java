@@ -1,5 +1,6 @@
 package MyGame;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -9,35 +10,45 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MyGameController
 {
     //Static variables
-    private static       int    SINGLE_BOND_WIDTH = 5;
-    private static       int    DOUBLE_BOND_WIDTH = 3;
-    private static final double BOND_OFFSET       = 5.0;
-    private static final String AMINO_ACIDS       = "ARN";
-    private static final int    LENGTH_USER_BONDS = 2; // 2 because a bond holds 2 elements
+    private static       int    MAX_QUESTION_COUNT = 1;
+    private static       int    SINGLE_BOND_WIDTH  = 5;
+    private static       int    DOUBLE_BOND_WIDTH  = 3;
+    private static final double BOND_OFFSET        = 5.0;
+    private static final String AMINO_ACIDS        = "ACDEFGHIKLMNPQRSTVWY";
+    private static final int    LENGTH_USER_BONDS  = 2; // 2 because a bond holds 2 elements
 
-    private static final int SINGLE_BOND_LENGTH = 1;
-    private static final int DOUBLE_BOND_LENGTH = 2;
-    private static final int SINGLE_BOND_INDEX  = 0;
-    private static final int DOUBLE_BOND_INDEX  = 1;
+    private static final int    SINGLE_BOND_LENGTH    = 1;
+    private static final int    DOUBLE_BOND_LENGTH    = 2;
+    private static final int    SINGLE_BOND_INDEX     = 0;
+    private static final int    DOUBLE_BOND_INDEX     = 1;
+    private static final int    E1_INDEX              = 0;
+    private static final int    E2_INDEX              = 1;
+    private static final double PERCENT               = 100.00;
+    private static final int    NO_QUESTIONS_ANSWERED = 0;
 
     // Instance variables (non-final)
-    private AminoAcid              currentAminoAcid;
-    private ArrayList<GameElement> currentAminoAcidGUI;
-    private GameElement            selectedElement;
-    private Bond                   currentBond;
-    private int                    score;
-
-    // Instance variables (final)
+    private AminoAcid                        currentAminoAcid;
+    private ArrayList<GameElement>           currentAminoAcidGUI;
+    private GameElement                      selectedElement;
+    private Bond                             currentBond;
+    private List<Character>                  availableAminoAcids;
     private List<Bond[]>                     bonds; // Track all bonds (single and double)
     private Map<String, ArrayList<String[]>> usersAnswers;
     private Map<String, ArrayList<Bond>>     usersAnswersAsBonds;
+    private ArrayList<AminoAcid>             correctAminoAcids;
+    private ArrayList<AminoAcid>             incorrectAminoAcids;
+    private int                              score;
+    private int                              questionCount          = 0;
+    private int                              totalQuestionsAnswered = 0;
 
     // FXML Variables
     @FXML
@@ -48,6 +59,9 @@ public class MyGameController
 
     @FXML
     private HBox gameButtonHBox;
+
+    @FXML
+    private VBox resultsPanelVBox;
 
     @FXML
     private Label gameLabel;
@@ -65,18 +79,37 @@ public class MyGameController
     private Button endSession;
 
     @FXML
+    private Label scoreLabel;
+
+    @FXML
+    private Label scoreDetailsLabel;
+
+    @FXML
+    private Label scorePercentLabel;
+
+    @FXML
     private void initialize()
     {
         // Instantiate _____
         usersAnswers        = new HashMap<>();
         usersAnswersAsBonds = new HashMap<>();
         bonds               = new ArrayList<>();
+        availableAminoAcids = new ArrayList<>();
 
-        // Hide game buttons
+        // Hide game and result buttons
         gameButtonHBox.setVisible(false);
+        resultsPanelVBox.setVisible(false);
 
+        // Set main label
         gameLabel.setText("Welcome to Khemical Konnect!");
 
+        // Load available amino acids
+        for(final char aa : AMINO_ACIDS.toCharArray())
+        {
+            availableAminoAcids.add(aa);
+        }
+
+        // Set button handlers
         startGame.setOnAction(e -> nextQuestion(e));
         rules.setOnAction(e -> showRules());
         submit.setOnAction(e -> submitEvent(e));
@@ -433,15 +466,20 @@ public class MyGameController
     {
         // Hide home buttons | Show game buttons
         removeHomeButtons();
+        resultsPanelVBox.setVisible(false);
         gameButtonHBox.setVisible(true);
 
         // Remove previous question (bonds, currentAminoAcid)
         removeQuestion();
 
         // Now generate next question
-        currentAminoAcid    = new AminoAcid(generateRandomAA());
-        currentAminoAcidGUI = currentAminoAcid.getAminoAcid();
+        currentAminoAcid = new AminoAcid(generateRandomAA());
+        gameLabel.setText("Draw the following amino acid:\n" + currentAminoAcid);
 
+        // Get the GameElement positions (as a map)
+        currentAminoAcidGUI = currentAminoAcid.getAminoAcidElements();
+
+        // Insert GameElements onto GUI
         for(final GameElement element : currentAminoAcidGUI)
         {
             addMouseEventHandlers(element, gamePane);
@@ -518,23 +556,32 @@ public class MyGameController
                 if(bond.length == SINGLE_BOND_LENGTH)
                 {
                     // Store element1 and element2 in temp String[]
-                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1().toString();
-                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2().toString();
+                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1()
+                            .toString();
+                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2()
+                            .toString();
                     // Add to tempMapValue Array AND usersAnswersAsBonds map
                     tempMapValues.add(userValuePlaceholder);
-                    usersAnswersAsBonds.get(userKey).add(bond[SINGLE_BOND_INDEX]);
+                    usersAnswersAsBonds.get(userKey)
+                            .add(bond[SINGLE_BOND_INDEX]);
                 }
                 else if(bond.length == DOUBLE_BOND_LENGTH)
                 {
-                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1().toString();
-                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2().toString();
+                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1()
+                            .toString();
+                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2()
+                            .toString();
                     // Add to tempMapValue Array
                     tempMapValues.add(userValuePlaceholder);
-                    usersAnswersAsBonds.get(userKey).add(bond[DOUBLE_BOND_INDEX]);
+                    usersAnswersAsBonds.get(userKey)
+                            .add(bond[DOUBLE_BOND_INDEX]);
                 }
             }
 
+            // update answer key | increase question count | increase questions answered
             usersAnswers.put(userKey, tempMapValues);
+            questionCount++;
+            totalQuestionsAnswered++;
 
             //debugging
             for(Map.Entry<String, ArrayList<String[]>> entry : usersAnswers.entrySet())
@@ -549,7 +596,15 @@ public class MyGameController
             }
 
             // Call next question after storing user results
-            nextQuestion(e);
+            if(questionCount < MAX_QUESTION_COUNT)
+            {
+                System.out.println(questionCount);
+                nextQuestion(e);
+            }
+            else
+            {
+                endSession(e);
+            }
         }
         else
         {
@@ -578,17 +633,19 @@ public class MyGameController
 
     }
 
-    private char generateRandomAA()
+    public char generateRandomAA()
     {
+
+        if(availableAminoAcids.isEmpty())
+        {
+            throw new IllegalStateException("No more amino acids to generate!");
+        }
+
         final Random random;
-        final char   nextAA;
-
         random = new Random();
-        nextAA = AMINO_ACIDS.charAt(random.nextInt(AMINO_ACIDS.length()));
 
-        //        System.out.println("Randomly generated amino acid: " + nextAA);
-
-        return nextAA;
+        // Remove and return a random amino acid
+        return availableAminoAcids.remove(random.nextInt(availableAminoAcids.size()));
     }
 
     @FXML
@@ -604,6 +661,9 @@ public class MyGameController
         removeQuestion();
         checkAllResponses();
 
+        // show result panel
+        resultsPanelVBox.setVisible(true);
+
         // display results
     }
 
@@ -613,8 +673,10 @@ public class MyGameController
         AminoAcidShop                    shop;
         Map<String, ArrayList<String[]>> answerKey;
 
-        shop      = new AminoAcidShop();
-        answerKey = shop.getAnswerKey();
+        shop                = new AminoAcidShop();
+        answerKey           = shop.getAnswerKey();
+        correctAminoAcids   = new ArrayList<>();
+        incorrectAminoAcids = new ArrayList<>();
 
         // Iterate through the usersAnswer's set: comparing the bond lists for each response
         for(final String key : usersAnswers.keySet())
@@ -628,9 +690,25 @@ public class MyGameController
             if(checkOneResponse(expectedBonds, userBonds))
             {
                 score++;
+
+                // Add correct amino acid
+                final AminoAcid correctAminoAcid;
+                correctAminoAcid = new AminoAcid(key.charAt(0));
+                correctAminoAcids.add(correctAminoAcid);
+
+            }
+            else
+            {
+                // Add incorrect amino acid
+                final AminoAcid incorrectAminoAcid;
+                incorrectAminoAcid = new AminoAcid(key.charAt(0));
+                incorrectAminoAcids.add(incorrectAminoAcid);
+
             }
         }
-
+        //debugging
+        System.out.println("CORRECT AS ARAY" + correctAminoAcids);
+        System.out.println("INCORRECT AS ARAY" + incorrectAminoAcids);
         displayResults();
     }
 
@@ -643,73 +721,173 @@ public class MyGameController
             return false;
         }
 
-        // Second: check if bond frequency is correct
+        // Second: check if all expected bonds exist in userResponse, then check if frequency matches
         for(final String[] bond : expectedBonds)
         {
-            bondExistsIn(bond, userBonds);
+            if(!bondExistsIn(bond, userBonds))
+            {
+                return false;
+            }
+        }
 
+        // Third: check if bond frequencies in answer key match user's bond frequency
+        if(!bondFrequencyEqual(expectedBonds, userBonds))
+        {
+            return false;
         }
 
         return true;
     }
 
-    private void bondExistsIn(final String[] bond, final ArrayList<String[]> userBonds)
+    private boolean bondFrequencyEqual(final ArrayList<String[]> bond, final ArrayList<String[]> userBonds)
     {
-//        for(final String[])
+        // copy and normalize both lists
+        final ArrayList<String> normalizedBond;
+        final ArrayList<String> normalizedUserBonds;
+
+        normalizedBond      = normalizeAndSort(bond);
+        normalizedUserBonds = normalizeAndSort(userBonds);
+
+        // Check if the two normalized lists are equal
+        return normalizedBond.equals(normalizedUserBonds);
+    }
+
+    /**
+     * Helper method to normalize and sort a list of String[] elements
+     */
+    private ArrayList<String> normalizeAndSort(ArrayList<String[]> bonds)
+    {
+        final ArrayList<String> normalizedList;
+        normalizedList = new ArrayList<>();
+
+        for(final String[] bond : bonds)
+        {
+            // Normalize each pair (order-independent)
+            normalizedList.add(normalizeBonds(bond));
+        }
+
+        // Sort the normalized list for comparison
+        Collections.sort(normalizedList);
+        return normalizedList;
+    }
+
+    /**
+     * Helper method to normalize a String[] (e.g., ["a", "b"] and ["b", "a"] become the same)
+     *
+     * @param bond
+     *
+     * @return
+     */
+    private String normalizeBonds(String[] bond)
+    {
+        if(bond.length != 2)
+        {
+            throw new IllegalArgumentException("Each bond must be a pair of two strings");
+        }
+
+        // Sort the bond to make the order irrelevant
+        final String[] sortedBond;
+        sortedBond = bond.clone();
+        Arrays.sort(sortedBond);
+
+        // Convert to a String
+        return Arrays.toString(sortedBond);
+    }
+
+    private boolean bondExistsIn(final String[] bond, final ArrayList<String[]> userBonds)
+    {
+        for(final String[] uBond : userBonds)
+        {
+            if(isBondEqual(uBond, bond))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isBondEqual(final String[] uBond, final String[] bond)
+    {
+        final String  userElement1;
+        final String  userElement2;
+        final String  keyElement1;
+        final String  keyElement2;
+        final boolean result;
+
+        userElement1 = uBond[E1_INDEX];
+        userElement2 = uBond[E2_INDEX];
+        keyElement1  = bond[E1_INDEX];
+        keyElement2  = bond[E2_INDEX];
+
+        // Returns equality in any order: Ie [A,B] == [B,A]
+        result = (userElement1.equals(keyElement1) && userElement2.equals(keyElement2)) ||
+                (userElement1.equals(keyElement2) && userElement2.equals(keyElement1));
+
+        return result;
     }
 
     private void displayResults()
     {
+        final StringBuilder sbCorrect;
+        final StringBuilder sbIncorrect;
+        final String        correctAA;
+        final String        incorrectAA;
+        final double        scoreAsPercent;
+
+        sbCorrect   = new StringBuilder("The amino acids you drew correctly: \n");
+        sbIncorrect = new StringBuilder("The amino acids you drew incorrectly: \n");
+
+        // add correct amino acids as a string, via a stream
+        correctAA      = correctAminoAcids.stream()
+                .map(AminoAcid::toString)
+                .collect(Collectors.joining("\n"));
+        // add incorrect amino acids as a string, via a stream
+        incorrectAA    = incorrectAminoAcids.stream()
+                .map(AminoAcid::toString)
+                .collect(Collectors.joining("\n"));
+
+        // calculate percent score
+        scoreAsPercent = (totalQuestionsAnswered == NO_QUESTIONS_ANSWERED) ? NO_QUESTIONS_ANSWERED :
+                (double) score / totalQuestionsAnswered * PERCENT;
+
+        sbCorrect.append(correctAA);
+        sbIncorrect.append(incorrectAA);
+
+        // Set up gui for displaying results
+        gameLabel.setText("Thank for playing Khemical Konnect! Try Again?");
+        scoreLabel.setText(String.format("You scored %d out of %d", score, totalQuestionsAnswered));
+        scorePercentLabel.setText(String.format("%.1f%%", scoreAsPercent));
+        scoreDetailsLabel.setText(sbCorrect + "\n" + sbIncorrect);
+
     }
 
-    /**
-     * @param bonds
-     *
-     * @return
-     */
-    public Map<String, List<Set<String>>> flattenBonds(final Map<String, ArrayList<String[]>> bonds)
+    public void restartGame(final ActionEvent e)
     {
+        // Restart score | question count | usersAnswers | usersAnswersAsBonds | availableAminoAcids
+        score                  = 0;
+        questionCount          = 0;
+        totalQuestionsAnswered = 0;
+        usersAnswers.clear();
+        usersAnswersAsBonds.clear();
+        availableAminoAcids.clear();
+        correctAminoAcids.clear();
+        incorrectAminoAcids.clear();
 
-        Map<String, List<Set<String>>> flattened;
-        flattened = new HashMap<>();
+        // Reset labels
+        gameLabel.setText("Welcome to Khemical Konnect!");
 
-        for(final Map.Entry<String, ArrayList<String[]>> entry : bonds.entrySet())
+        // Reset available amino acids
+        for(final char aa : AMINO_ACIDS.toCharArray())
         {
-            String              key;
-            ArrayList<String[]> bondPairs;
-            List<Set<String>>   bondListPlaceholder;
-
-            key                 = entry.getKey();
-            bondPairs           = entry.getValue();
-            bondListPlaceholder = new ArrayList<>();
-
-            // Iterate through all Map Values and flatten to List<String>
-            for(final String[] pair : bondPairs)
-            {
-                // Add each pair to the placeholder list
-                bondListPlaceholder.add(new HashSet<>(Arrays.asList(pair)));
-            }
-
-            flattened.put(key, bondListPlaceholder);
+            availableAminoAcids.add(aa);
         }
 
-        //debugging
-        System.out.println("INSIDE FLATTENBONDS");
-        for(Map.Entry<String, List<Set<String>>> goat : flattened.entrySet())
-        {
-            String            key1     = goat.getKey();
-            List<Set<String>> bondList = goat.getValue();
+        nextQuestion(e);
+    }
 
-            System.out.println("Key: " + key1);
-            System.out.println("Bonds:");
-            for(Set<String> bond : bondList)
-            {
-                System.out.println("  " + bond);
-            }
-            System.out.println(); // Add space between entries for readability
-        }
-
-        return flattened;
+    public void closeApplication(final ActionEvent actionEvent)
+    {
+        Platform.exit();
     }
 }
 
