@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -621,13 +622,13 @@ public class MyGameController
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
         // Set the title of the popup
-        alert.setTitle("Cannot submit a blank answer!");
+        alert.setTitle("Oops!");
 
         // Set the header text (optional)
         alert.setHeaderText("Cannot submit a blank answer!");
 
         // Set the content text to the error message
-        alert.setContentText("Cannot submit a blank answer!");
+        alert.setContentText("Please add at least one bond.");
 
         // Show the alert and wait for the user to close it
         alert.showAndWait();
@@ -652,7 +653,27 @@ public class MyGameController
     @FXML
     private void showRules()
     {
-        // Create pop up
+        Alert         rules;
+        StringBuilder sb;
+
+        rules = new Alert(Alert.AlertType.INFORMATION);
+        sb    = new StringBuilder();
+
+        rules.setTitle("Rules🧪");
+        rules.setHeaderText("Rules of Chemical Connect");
+
+        // Build rule message
+        sb.append("Objective: 'draw' the amino acid by connecting the dots!\n");
+        sb.append("You will be prompted 5 randomized amino acids.\n\n");
+        sb.append("1. To add a bond, drag the mouse from a circle to the next circle.\n");
+        sb.append("2. To remove a bond, simply click on it.\n");
+        sb.append("3. Hit submit when you are finished.\n");
+        sb.append("4. Hit quit when you do NOT want to complete all 5 questions.\n");
+        sb.append("5. Your score is displayed once the game ends.\n");
+        sb.append("\tYour correct and incorrect amino acids will be listed.\n\n\n");
+        sb.append("Note: You cannot submit blank responses.\n");
+        rules.setContentText(sb.toString());
+        rules.showAndWait();
     }
 
     public void endSession(final ActionEvent actionEvent)
