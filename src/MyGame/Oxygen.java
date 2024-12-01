@@ -9,7 +9,7 @@ public class Oxygen extends GameElement
 
     // Static variables
     private static Color OXYGEN_COLOR        = Color.DEEPPINK;
-    private static Color OXYGEN_BORDER_COLOR = Color.HONEYDEW;
+    private static Color OXYGEN_BORDER_COLOR = Color.PURPLE;
     private static int   OXYGEN_RADIUS       = 15;
 
     // Instance variables (final)

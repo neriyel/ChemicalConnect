@@ -19,11 +19,12 @@ import java.util.stream.Collectors;
 public class MyGameController
 {
     //Static variables
-    private static       int    MAX_QUESTION_COUNT = 1;
-    private static       int    SINGLE_BOND_WIDTH  = 5;
-    private static       int    DOUBLE_BOND_WIDTH  = 3;
+    private static final int    MAX_QUESTION_COUNT = 5;
+    private static final int    SINGLE_BOND_WIDTH  = 5;
+    private static final int    DOUBLE_BOND_WIDTH  = 3;
     private static final double BOND_OFFSET        = 5.0;
-    private static final String AMINO_ACIDS        = "ACDEFGHIKLMNPQRSTVWY";
+    private static final String AMINO_ACIDS        = "AVILM";
+    //    private static final String AMINO_ACIDS        = "ACDEFGHIKLMNPQRSTVWY";
     private static final int    LENGTH_USER_BONDS  = 2; // 2 because a bond holds 2 elements
 
     private static final int    SINGLE_BOND_LENGTH    = 1;
@@ -838,11 +839,11 @@ public class MyGameController
         sbIncorrect = new StringBuilder("The amino acids you drew incorrectly: \n");
 
         // add correct amino acids as a string, via a stream
-        correctAA      = correctAminoAcids.stream()
+        correctAA = correctAminoAcids.stream()
                 .map(AminoAcid::toString)
                 .collect(Collectors.joining("\n"));
         // add incorrect amino acids as a string, via a stream
-        incorrectAA    = incorrectAminoAcids.stream()
+        incorrectAA = incorrectAminoAcids.stream()
                 .map(AminoAcid::toString)
                 .collect(Collectors.joining("\n"));
 
@@ -854,7 +855,7 @@ public class MyGameController
         sbIncorrect.append(incorrectAA);
 
         // Set up gui for displaying results
-        gameLabel.setText("Thank for playing Khemical Konnect! Try Again?");
+        gameLabel.setText("Thanks for playing Khemical Konnect! Try Again?");
         scoreLabel.setText(String.format("You scored %d out of %d", score, totalQuestionsAnswered));
         scorePercentLabel.setText(String.format("%.1f%%", scoreAsPercent));
         scoreDetailsLabel.setText(sbCorrect + "\n" + sbIncorrect);

@@ -24,7 +24,7 @@ public class AminoAcid
     private final String aminoAcid;
 
     // Instance variables (non-final)
-    private ArrayList<GameElement>           elements;
+    private ArrayList<GameElement> elements;
 
     /**
      * Constructor
@@ -50,19 +50,19 @@ public class AminoAcid
      */
     private void createAminoAcid(final String aminoAcid)
     {
-        final AminoAcidShop  shop;
-        final ElementFactory carbonFactory;
-        //        final ElementFactory    nitrogenFactory;
-        //        final ElementFactory    oxygenFactory;
-        //        final ElementFactory    sulphurFactory;
+        final AminoAcidShop     shop;
+        final ElementFactory    carbonFactory;
+        final ElementFactory    nitrogenFactory;
+        final ElementFactory    oxygenFactory;
+        final ElementFactory    sulphurFactory;
         final ArrayList<String> aminoPositions;
 
-        shop          = new AminoAcidShop();
-        carbonFactory = new CarbonFactory();
-        //        nitrogenFactory = new NitrogenFactory();
-        //        oxygenFactory   = new OxygenFactory();
-        //        sulphurFactory  = new SulphurFactory();
-        aminoPositions = shop.getAminoAcidAsMapValue(aminoAcid);
+        shop            = new AminoAcidShop();
+        carbonFactory   = new CarbonFactory();
+        nitrogenFactory = new NitrogenFactory();
+        oxygenFactory   = new OxygenFactory();
+        sulphurFactory  = new SulphurFactory();
+        aminoPositions  = shop.getAminoAcidAsMapValue(aminoAcid);
 
         if(aminoPositions != null)
         {
@@ -89,6 +89,13 @@ public class AminoAcid
                         elements.add(carbonFactory.createElement(elementID, elementPosX, elementPosY));
                         break;
                     case NITROGEN_ID:
+                        elements.add(nitrogenFactory.createElement(elementID, elementPosX, elementPosY));
+                        break;
+                    case SULPHUR_ID:
+                        elements.add(sulphurFactory.createElement(elementID, elementPosX, elementPosY));
+                        break;
+                    case OXYGEN_ID:
+                        elements.add(oxygenFactory.createElement(elementID, elementPosX, elementPosY));
                         break;
                 }
             }
@@ -99,7 +106,7 @@ public class AminoAcid
     public ArrayList<GameElement> getAminoAcidElements()
     {
         // debugging
-//        System.out.println("inside getAminoAcid" + this.elements);
+        //        System.out.println("inside getAminoAcid" + this.elements);
         return this.elements;
     }
 
@@ -119,7 +126,8 @@ public class AminoAcid
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return switch(String.valueOf(this.getAminoAcidID()))
         {
             case "A" -> "Alanine";
