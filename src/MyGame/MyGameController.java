@@ -32,10 +32,12 @@ public class MyGameController
     private ArrayList<GameElement> currentAminoAcidGUI;
     private GameElement            selectedElement;
     private Bond                   currentBond;
+    private int                    score;
 
     // Instance variables (final)
     private List<Bond[]>                     bonds; // Track all bonds (single and double)
     private Map<String, ArrayList<String[]>> usersAnswers;
+    private Map<String, ArrayList<Bond>>     usersAnswersAsBonds;
 
     // FXML Variables
     @FXML
@@ -66,8 +68,9 @@ public class MyGameController
     private void initialize()
     {
         // Instantiate _____
-        usersAnswers = new HashMap<>();
-        bonds        = new ArrayList<>();
+        usersAnswers        = new HashMap<>();
+        usersAnswersAsBonds = new HashMap<>();
+        bonds               = new ArrayList<>();
 
         // Hide game buttons
         gameButtonHBox.setVisible(false);
@@ -117,7 +120,8 @@ public class MyGameController
         // Set the initial Element
         currentBond.setElement1(selectedElement);
 
-        pane.getChildren().add(currentBond);
+        pane.getChildren()
+                .add(currentBond);
     }
 
     /**
@@ -177,16 +181,17 @@ public class MyGameController
                 // Note 2: see JavaDoc
                 bonds.add(new Bond[]{currentBond}); // Add single bond
                 //debugging
-                for(Bond[] bond : bonds)
-                {
-                    System.out.println(Arrays.toString(bond) + "hehe");
-                }
+                //                for(Bond[] bond : bonds)
+                //                {
+                //                    System.out.println(Arrays.toString(bond) + "hehe");
+                //                }
                 addClickListenerToLine(currentBond, pane); // Add click listener for removal
             }
             else if(existingBond.length == 1)
             {
                 // Note 3: see JavaDoc
-                pane.getChildren().remove(currentBond);
+                pane.getChildren()
+                        .remove(currentBond);
 
                 // Add a second (parallel) line
                 final Bond offsetDoubleBond;
@@ -194,30 +199,33 @@ public class MyGameController
 
                 bonds.add(new Bond[]{existingBond[0], offsetDoubleBond});
                 //debugging
-                System.out.println("Start second bond: ");
-                for(Bond[] bond : bonds)
-                {
-                    System.out.println(Arrays.toString(bond));
-                }
-                pane.getChildren().add(offsetDoubleBond);
+                //                System.out.println("Start second bond: ");
+                //                for(Bond[] bond : bonds)
+                //                {
+                //                    System.out.println(Arrays.toString(bond));
+                //                }
+                pane.getChildren()
+                        .add(offsetDoubleBond);
                 addClickListenerToLine(offsetDoubleBond, pane); // Add click listener for removal
             }
             else
             {
                 // If two or more bonds exist: reject the action
-                pane.getChildren().remove(currentBond); // Remove the redundant line
+                pane.getChildren()
+                        .remove(currentBond); // Remove the redundant line
             }
         }
         else
         {
             // Remove the temporary line if the connection is invalid
-            pane.getChildren().remove(currentBond);
+            pane.getChildren()
+                    .remove(currentBond);
             //debugging
-            System.out.println("invalid bonds?: ");
-            for(Bond[] bond : bonds)
-            {
-                System.out.println(Arrays.toString(bond));
-            }
+            //            System.out.println("invalid bonds?: ");
+            //            for(Bond[] bond : bonds)
+            //            {
+            //                System.out.println(Arrays.toString(bond));
+            //            }
         }
 
         // Reset state
@@ -274,7 +282,12 @@ public class MyGameController
             for(final Bond bond : bondPair)
             {
                 // TODO: probably make this a helper method
-                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() && bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) || (bond.getStartX() == e2.getCenterX() && bond.getStartY() == e2.getCenterY() && bond.getEndX() == e1.getCenterX() && bond.getEndY() == e1.getCenterY()))
+                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() &&
+                        bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) ||
+                        (bond.getStartX() == e2.getCenterX() &&
+                                bond.getStartY() == e2.getCenterY() &&
+                                bond.getEndX() == e1.getCenterX() &&
+                                bond.getEndY() == e1.getCenterY()))
                 {
                     bondsBetween.add(bond);
                 }
@@ -299,11 +312,11 @@ public class MyGameController
                                    removeBondFromListAndScreen(bond, pane);
 
                                    //debugging
-                                   System.out.println("removing bond");
-                                   for(Bond[] currentBond : bonds)
-                                   {
-                                       System.out.println(Arrays.toString(currentBond));
-                                   }
+                                   //                                   System.out.println("removing bond");
+                                   //                                   for(Bond[] currentBond : bonds)
+                                   //                                   {
+                                   //                                       System.out.println(Arrays.toString(currentBond));
+                                   //                                   }
                                });
     }
 
@@ -322,7 +335,8 @@ public class MyGameController
             bondPair = iter.next();
 
             // Check if the bond belongs to this bond pair
-            if(Arrays.asList(bondPair).contains(bond))
+            if(Arrays.asList(bondPair)
+                    .contains(bond))
             {
                 // Extract the coordinates of the bond being removed
                 double lineStartX = bond.getStartX();
@@ -351,7 +365,8 @@ public class MyGameController
 
                 // If valid, remove the bond from the List, and the GUI
                 iter.remove();
-                pane.getChildren().remove(bond);
+                pane.getChildren()
+                        .remove(bond);
                 break; // Stop once the bond is found and removed
             }
         }
@@ -404,7 +419,10 @@ public class MyGameController
         double py = ux * offset;
 
         // Create parallel bond
-        final Bond parallelLine = new Bond(bond.getStartX() + px, bond.getStartY() + py, bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
+        final Bond parallelLine = new Bond(
+                bond.getStartX() + px,
+                bond.getStartY() + py,
+                bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
         parallelLine.setStrokeWidth(DOUBLE_BOND_WIDTH);
 
         return parallelLine;
@@ -427,7 +445,8 @@ public class MyGameController
         for(final GameElement element : currentAminoAcidGUI)
         {
             addMouseEventHandlers(element, gamePane);
-            gamePane.getChildren().add(element); // Add the dot to the pane
+            gamePane.getChildren()
+                    .add(element); // Add the dot to the pane
         }
     }
 
@@ -449,7 +468,8 @@ public class MyGameController
         {
             for(final GameElement element : currentAminoAcidGUI)
             {
-                gamePane.getChildren().remove(element);
+                gamePane.getChildren()
+                        .remove(element);
             }
             currentAminoAcidGUI.clear();
         }
@@ -460,7 +480,8 @@ public class MyGameController
             {
                 for(final Bond bond1 : bond)
                 {
-                    gamePane.getChildren().remove(bond1);
+                    gamePane.getChildren()
+                            .remove(bond1);
                 }
             }
             bonds.clear();
@@ -490,15 +511,18 @@ public class MyGameController
             {
                 // Note 1: See javaDoc
                 String[] userValuePlaceholder;
+
                 userValuePlaceholder = new String[LENGTH_USER_BONDS];
+                usersAnswersAsBonds.put(userKey, new ArrayList<>());
 
                 if(bond.length == SINGLE_BOND_LENGTH)
                 {
                     // Store element1 and element2 in temp String[]
                     userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1().toString();
                     userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2().toString();
-                    // Add to tempMapValue Array
+                    // Add to tempMapValue Array AND usersAnswersAsBonds map
                     tempMapValues.add(userValuePlaceholder);
+                    usersAnswersAsBonds.get(userKey).add(bond[SINGLE_BOND_INDEX]);
                 }
                 else if(bond.length == DOUBLE_BOND_LENGTH)
                 {
@@ -506,10 +530,11 @@ public class MyGameController
                     userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2().toString();
                     // Add to tempMapValue Array
                     tempMapValues.add(userValuePlaceholder);
+                    usersAnswersAsBonds.get(userKey).add(bond[DOUBLE_BOND_INDEX]);
                 }
             }
 
-            usersAnswers.put(currentAminoAcid.getAminoAcidID(), tempMapValues);
+            usersAnswers.put(userKey, tempMapValues);
 
             //debugging
             for(Map.Entry<String, ArrayList<String[]>> entry : usersAnswers.entrySet())
@@ -582,49 +607,62 @@ public class MyGameController
         // display results
     }
 
-
-    public boolean checkAllResponses()
+    public void checkAllResponses()
     {
-        // Flatten and normalize answer key
-        Map<String, List<Set<String>>> normalizedAnswerKey;
-        Map<String, List<Set<String>>> normalizedUserResponses;
-
         // Get answer key from aminoAcidShop
+        AminoAcidShop                    shop;
+        Map<String, ArrayList<String[]>> answerKey;
 
-        AminoAcidShop shop;
-        shop = new AminoAcidShop();
+        shop      = new AminoAcidShop();
+        answerKey = shop.getAnswerKey();
 
-        normalizedAnswerKey     = flattenBonds(shop.getAnswerKey());
-        normalizedUserResponses = flattenBonds(usersAnswers);
+        // Iterate through the usersAnswer's set: comparing the bond lists for each response
+        for(final String key : usersAnswers.keySet())
+        {
+            final ArrayList<String[]> expectedBonds;
+            final ArrayList<String[]> userBonds;
 
-        // Compare the keys
-        if(!normalizedAnswerKey.keySet().equals(normalizedUserResponses.keySet()))
+            expectedBonds = answerKey.get(key);
+            userBonds     = usersAnswers.get(key);
+
+            if(checkOneResponse(expectedBonds, userBonds))
+            {
+                score++;
+            }
+        }
+
+        displayResults();
+    }
+
+    private boolean checkOneResponse(final ArrayList<String[]> expectedBonds, final ArrayList<String[]> userBonds)
+    {
+
+        // First: check if correct # of bonds were submitted. Note: .containsAll() doesn't account for bond frequency
+        if(expectedBonds.size() != userBonds.size())
         {
             return false;
         }
 
-        // Compare the bond lists for each key
-        for(final String key : normalizedAnswerKey.keySet())
+        // Second: check if bond frequency is correct
+        for(final String[] bond : expectedBonds)
         {
-            List<Set<String>> expectedBonds;
-            List<Set<String>> userBonds;
+            bondExistsIn(bond, userBonds);
 
-            expectedBonds = normalizedAnswerKey.get(key);
-            userBonds     = normalizedUserResponses.get(key);
-
-            if(expectedBonds.size() != userBonds.size() || !userBonds.containsAll(expectedBonds))
-            {
-                return false;
-            }
         }
+
         return true;
     }
 
+    private void bondExistsIn(final String[] bond, final ArrayList<String[]> userBonds)
+    {
+//        for(final String[])
+    }
+
+    private void displayResults()
+    {
+    }
+
     /**
-     * Takes the answerKey and userResponses and FLATTENS it for easier comparison:
-     * <p>
-     * Flattens this Map type:  Map<String, ArrayList<String[]> ---to---> Map<String, ArrayList<String>>
-     *
      * @param bonds
      *
      * @return
