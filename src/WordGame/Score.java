@@ -97,17 +97,22 @@ public class Score
 
     public static void checkHighestScoreAndPrompt(final List<Score> scores, final Score userScore)
     {
-        Score highScore = scores.stream()
-                .max((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore()))
-                .orElse(null);
+        final Score highScore;
+        final int   userScoreValue;
+        final int   highestScoreValue;
 
-        if(highScore == null || userScore.getScore() > highScore.getScore())
+        highScore         = scores.stream().max((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore())).orElse(null);
+        userScoreValue    = userScore.getScore();
+        highestScoreValue = highScore.getScore();
+
+        if(highScore == null || userScoreValue > highestScoreValue)
         {
-            System.out.println("Congratulations! You set a new high score!");
+            System.out.printf("You just set a new highscore of %d!!", userScoreValue);
         }
         else
         {
-            System.out.printf("You did not beat the high score of %d points from %s.%n", highScore.getScore(), highScore.dateTimePlayed);
+            System.out.printf("Sorry, you didnt beat the high score of %d points from %s.%n", highestScoreValue,
+                              highScore.dateTimePlayed);
         }
     }
 

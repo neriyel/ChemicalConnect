@@ -90,7 +90,7 @@ public class MyGameController
     private Label scorePercentLabel;
 
     @FXML
-    private void initialize()
+    public void initialize()
     {
         // Instantiate _____
         usersAnswers        = new HashMap<>();
@@ -99,8 +99,8 @@ public class MyGameController
         availableAminoAcids = new ArrayList<>();
 
         // Hide game and result buttons
-        gameButtonHBox.setVisible(false);
         resultsPanelVBox.setVisible(false);
+        gameButtonHBox.setVisible(false);
 
         // Set main label
         gameLabel.setText("Welcome to Chemical Connect!");
@@ -155,8 +155,7 @@ public class MyGameController
         // Set the initial Element
         currentBond.setElement1(selectedElement);
 
-        pane.getChildren()
-                .add(currentBond);
+        pane.getChildren().add(currentBond);
     }
 
     /**
@@ -225,8 +224,7 @@ public class MyGameController
             else if(existingBond.length == 1)
             {
                 // Note 3: see JavaDoc
-                pane.getChildren()
-                        .remove(currentBond);
+                pane.getChildren().remove(currentBond);
 
                 // Add a second (parallel) line
                 final Bond offsetDoubleBond;
@@ -239,22 +237,19 @@ public class MyGameController
                 //                {
                 //                    System.out.println(Arrays.toString(bond));
                 //                }
-                pane.getChildren()
-                        .add(offsetDoubleBond);
+                pane.getChildren().add(offsetDoubleBond);
                 addClickListenerToLine(offsetDoubleBond, pane); // Add click listener for removal
             }
             else
             {
                 // If two or more bonds exist: reject the action
-                pane.getChildren()
-                        .remove(currentBond); // Remove the redundant line
+                pane.getChildren().remove(currentBond); // Remove the redundant line
             }
         }
         else
         {
             // Remove the temporary line if the connection is invalid
-            pane.getChildren()
-                    .remove(currentBond);
+            pane.getChildren().remove(currentBond);
             //debugging
             //            System.out.println("invalid bonds?: ");
             //            for(Bond[] bond : bonds)
@@ -317,12 +312,7 @@ public class MyGameController
             for(final Bond bond : bondPair)
             {
                 // TODO: probably make this a helper method
-                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() &&
-                        bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) ||
-                        (bond.getStartX() == e2.getCenterX() &&
-                                bond.getStartY() == e2.getCenterY() &&
-                                bond.getEndX() == e1.getCenterX() &&
-                                bond.getEndY() == e1.getCenterY()))
+                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() && bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) || (bond.getStartX() == e2.getCenterX() && bond.getStartY() == e2.getCenterY() && bond.getEndX() == e1.getCenterX() && bond.getEndY() == e1.getCenterY()))
                 {
                     bondsBetween.add(bond);
                 }
@@ -370,8 +360,7 @@ public class MyGameController
             bondPair = iter.next();
 
             // Check if the bond belongs to this bond pair
-            if(Arrays.asList(bondPair)
-                    .contains(bond))
+            if(Arrays.asList(bondPair).contains(bond))
             {
                 // Extract the coordinates of the bond being removed
                 double lineStartX = bond.getStartX();
@@ -400,8 +389,7 @@ public class MyGameController
 
                 // If valid, remove the bond from the List, and the GUI
                 iter.remove();
-                pane.getChildren()
-                        .remove(bond);
+                pane.getChildren().remove(bond);
                 break; // Stop once the bond is found and removed
             }
         }
@@ -454,10 +442,7 @@ public class MyGameController
         double py = ux * offset;
 
         // Create parallel bond
-        final Bond parallelLine = new Bond(
-                bond.getStartX() + px,
-                bond.getStartY() + py,
-                bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
+        final Bond parallelLine = new Bond(bond.getStartX() + px, bond.getStartY() + py, bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
         parallelLine.setStrokeWidth(DOUBLE_BOND_WIDTH);
 
         return parallelLine;
@@ -485,8 +470,7 @@ public class MyGameController
         for(final GameElement element : currentAminoAcidGUI)
         {
             addMouseEventHandlers(element, gamePane);
-            gamePane.getChildren()
-                    .add(element); // Add the dot to the pane
+            gamePane.getChildren().add(element); // Add the dot to the pane
         }
     }
 
@@ -508,8 +492,7 @@ public class MyGameController
         {
             for(final GameElement element : currentAminoAcidGUI)
             {
-                gamePane.getChildren()
-                        .remove(element);
+                gamePane.getChildren().remove(element);
             }
             currentAminoAcidGUI.clear();
         }
@@ -520,8 +503,7 @@ public class MyGameController
             {
                 for(final Bond bond1 : bond)
                 {
-                    gamePane.getChildren()
-                            .remove(bond1);
+                    gamePane.getChildren().remove(bond1);
                 }
             }
             bonds.clear();
@@ -558,25 +540,19 @@ public class MyGameController
                 if(bond.length == SINGLE_BOND_LENGTH)
                 {
                     // Store element1 and element2 in temp String[]
-                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1()
-                            .toString();
-                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2()
-                            .toString();
+                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1().toString();
+                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2().toString();
                     // Add to tempMapValue Array AND usersAnswersAsBonds map
                     tempMapValues.add(userValuePlaceholder);
-                    usersAnswersAsBonds.get(userKey)
-                            .add(bond[SINGLE_BOND_INDEX]);
+                    usersAnswersAsBonds.get(userKey).add(bond[SINGLE_BOND_INDEX]);
                 }
                 else if(bond.length == DOUBLE_BOND_LENGTH)
                 {
-                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1()
-                            .toString();
-                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2()
-                            .toString();
+                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1().toString();
+                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2().toString();
                     // Add to tempMapValue Array
                     tempMapValues.add(userValuePlaceholder);
-                    usersAnswersAsBonds.get(userKey)
-                            .add(bond[DOUBLE_BOND_INDEX]);
+                    usersAnswersAsBonds.get(userKey).add(bond[DOUBLE_BOND_INDEX]);
                 }
             }
 
@@ -842,8 +818,7 @@ public class MyGameController
         keyElement2  = bond[E2_INDEX];
 
         // Returns equality in any order: Ie [A,B] == [B,A]
-        result = (userElement1.equals(keyElement1) && userElement2.equals(keyElement2)) ||
-                (userElement1.equals(keyElement2) && userElement2.equals(keyElement1));
+        result = (userElement1.equals(keyElement1) && userElement2.equals(keyElement2)) || (userElement1.equals(keyElement2) && userElement2.equals(keyElement1));
 
         return result;
     }
@@ -860,17 +835,12 @@ public class MyGameController
         sbIncorrect = new StringBuilder("The amino acids you drew incorrectly: \n");
 
         // add correct amino acids as a string, via a stream
-        correctAA = correctAminoAcids.stream()
-                .map(AminoAcid::toString)
-                .collect(Collectors.joining("\n"));
+        correctAA = correctAminoAcids.stream().map(AminoAcid::toString).collect(Collectors.joining("\n"));
         // add incorrect amino acids as a string, via a stream
-        incorrectAA = incorrectAminoAcids.stream()
-                .map(AminoAcid::toString)
-                .collect(Collectors.joining("\n"));
+        incorrectAA = incorrectAminoAcids.stream().map(AminoAcid::toString).collect(Collectors.joining("\n"));
 
         // calculate percent score
-        scoreAsPercent = (totalQuestionsAnswered == NO_QUESTIONS_ANSWERED) ? NO_QUESTIONS_ANSWERED :
-                (double) score / totalQuestionsAnswered * PERCENT;
+        scoreAsPercent = (totalQuestionsAnswered == NO_QUESTIONS_ANSWERED) ? NO_QUESTIONS_ANSWERED : (double) score / totalQuestionsAnswered * PERCENT;
 
         sbCorrect.append(correctAA);
         sbIncorrect.append(incorrectAA);

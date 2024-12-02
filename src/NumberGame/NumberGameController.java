@@ -255,7 +255,7 @@ public class NumberGameController
 
         alert.setTitle("Game Over");
         alert.setHeaderText("Impossible to place the next number: " + rand);
-        alert.setContentText("Try Again?" + scoreSummary());
+        alert.setContentText("Try Again?\n" + scoreSummary());
         alert.getButtonTypes()
                 .setAll(endGame, tryAgain);
 
@@ -307,7 +307,8 @@ public class NumberGameController
 
         placementRate = (double) placements / totalGamesPlayed;
 
-        summary = String.format("You won %d out of %d game(s), with %d successful placements, averaging to %.2f placements per game", totalGamesWon, totalGamesPlayed, placements, placementRate);
+        summary = String.format("You won %d out of %d game(s)\n with %d successful placements\n averaging to %.2f " +
+                                        "placements per game", totalGamesWon, totalGamesPlayed, placements, placementRate);
 
         return summary;
     }
