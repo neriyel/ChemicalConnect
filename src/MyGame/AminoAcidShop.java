@@ -54,9 +54,9 @@ public class AminoAcidShop
                 }
                 else if(currentAminoAcid != null)
                 {
-                    final Bond bond;
-                    String[]   tempAnswerKeyValue;
-                    String[]   tempBuffer;
+                    final Bond     bond;
+                    final String[] tempAnswerKeyValue;
+                    final String[] tempBuffer;
 
                     tempAnswerKeyValue = new String[2];
                     tempBuffer         = line.split(" ", 2);
@@ -77,17 +77,17 @@ public class AminoAcidShop
         }
 
         //debugging
-//        System.out.println("INSIDE POPULATE ANSWER KEY!!!!");
-//        for(Map.Entry<String, ArrayList<String[]>> entry : answerKey.entrySet())
-//        {
-//            System.out.print(entry.getKey() + ": ");
-//
-//            // Loop through the ArrayList
-//            for(String[] array : entry.getValue())
-//            {
-//                System.out.println(Arrays.toString(array));  // Print each String[] as a string
-//            }
-//        }
+        //        System.out.println("INSIDE POPULATE ANSWER KEY!!!!");
+        //        for(Map.Entry<String, ArrayList<String[]>> entry : answerKey.entrySet())
+        //        {
+        //            System.out.print(entry.getKey() + ": ");
+        //
+        //            // Loop through the ArrayList
+        //            for(String[] array : entry.getValue())
+        //            {
+        //                System.out.println(Arrays.toString(array));  // Print each String[] as a string
+        //            }
+        //        }
     }
 
     /**
@@ -113,6 +113,10 @@ public class AminoAcidShop
 
             for(final String line : lines.toList())
             {
+                if(line.isEmpty())
+                {
+                    continue;
+                }
                 // If new amino acid detected, input new Map Key
                 if(line.matches(AA_IDENTIFIER))
                 {

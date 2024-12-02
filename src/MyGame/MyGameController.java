@@ -103,7 +103,7 @@ public class MyGameController
         resultsPanelVBox.setVisible(false);
 
         // Set main label
-        gameLabel.setText("Welcome to Khemical Konnect!");
+        gameLabel.setText("Welcome to Chemical Connect!");
 
         // Load available amino acids
         for(final char aa : AMINO_ACIDS.toCharArray())
