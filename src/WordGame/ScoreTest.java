@@ -1,6 +1,5 @@
 package WordGame;
 
-import WordGame.Score;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,11 +51,11 @@ class ScoreTest {
         // Create 25 scores and write them to the file
         for (int i = 0; i < 25; i++) {
             Score score = new Score(LocalDateTime.now(), 1, i + 1, (i % 3) + 1, (i % 2) + 1);
-            Score.appendScoreToFile(score, SCORE_FILE);
+            Score.appendCurrentScoreToFile(score, SCORE_FILE);
         }
 
         // Read scores from the file
-        List<Score> scores = Score.readScoresFromFile(SCORE_FILE);
+        List<Score> scores = Score.readAllScoresFromFile(SCORE_FILE);
 
         // Validate the number of scores and their content
         assertEquals(25, scores.size(), "Twenty-five scores should have been read from the file.");
@@ -71,15 +70,15 @@ class ScoreTest {
         // Create some initial scores and add them to the file
         Score score1 = new Score(LocalDateTime.now(), 1, 6, 2, 1); // 14 points
         Score score2 = new Score(LocalDateTime.now(), 1, 9, 1, 0); // 19 points
-        Score.appendScoreToFile(score1, SCORE_FILE);
-        Score.appendScoreToFile(score2, SCORE_FILE);
+        Score.appendCurrentScoreToFile(score1, SCORE_FILE);
+        Score.appendCurrentScoreToFile(score2, SCORE_FILE);
 
         // Add a new score that is NOT a high score
         Score score3 = new Score(LocalDateTime.now(), 1, 7, 2, 1); // 16 points
-        Score.appendScoreToFile(score3, SCORE_FILE);
+        Score.appendCurrentScoreToFile(score3, SCORE_FILE);
 
         // Read scores from the file
-        List<Score> scores = Score.readScoresFromFile(SCORE_FILE);
+        List<Score> scores = Score.readAllScoresFromFile(SCORE_FILE);
 
         // Verify the highest score is still 19
         int highScore = scores.stream().mapToInt(Score::getScore).max().orElse(0);
@@ -91,15 +90,15 @@ class ScoreTest {
         // Create some initial scores and add them to the file
         Score score1 = new Score(LocalDateTime.now(), 1, 6, 2, 1); // 14 points
         Score score2 = new Score(LocalDateTime.now(), 1, 9, 1, 0); // 19 points
-        Score.appendScoreToFile(score1, SCORE_FILE);
-        Score.appendScoreToFile(score2, SCORE_FILE);
+        Score.appendCurrentScoreToFile(score1, SCORE_FILE);
+        Score.appendCurrentScoreToFile(score2, SCORE_FILE);
 
         // Add a new score that IS a high score
         Score score3 = new Score(LocalDateTime.now(), 1, 10, 1, 0); // 21 points
-        Score.appendScoreToFile(score3, SCORE_FILE);
+        Score.appendCurrentScoreToFile(score3, SCORE_FILE);
 
         // Read scores from the file
-        List<Score> scores = Score.readScoresFromFile(SCORE_FILE);
+        List<Score> scores = Score.readAllScoresFromFile(SCORE_FILE);
 
         // Verify the highest score is now 21
         int highScore = scores.stream().mapToInt(Score::getScore).max().orElse(0);
@@ -111,28 +110,28 @@ class ScoreTest {
         // Create initial scores and add them to the file
         for (int i = 0; i < 5; i++) {
             Score score = new Score(LocalDateTime.now(), 1, 5 + i, 1, 1); // Variable scores
-            Score.appendScoreToFile(score, SCORE_FILE);
+            Score.appendCurrentScoreToFile(score, SCORE_FILE);
         }
 
         // Perform the first read
-        List<Score> scores1 = Score.readScoresFromFile(SCORE_FILE);
+        List<Score> scores1 = Score.readAllScoresFromFile(SCORE_FILE);
         assertEquals(5, scores1.size(), "There should be 5 scores after the first write and read.");
 
         // Add more scores to the file
         for (int i = 5; i < 10; i++) {
             Score score = new Score(LocalDateTime.now(), 1, 5 + i, 1, 1); // Variable scores
-            Score.appendScoreToFile(score, SCORE_FILE);
+            Score.appendCurrentScoreToFile(score, SCORE_FILE);
         }
 
         // Perform the second read
-        List<Score> scores2 = Score.readScoresFromFile(SCORE_FILE);
+        List<Score> scores2 = Score.readAllScoresFromFile(SCORE_FILE);
         assertEquals(10, scores2.size(), "There should be 10 scores after the second write and read.");
     }
 
     @Test
     void testEmptyScoreFile() throws IOException {
         // Test reading from an empty score file, should return an empty list
-        List<Score> scores = Score.readScoresFromFile(SCORE_FILE);
+        List<Score> scores = Score.readAllScoresFromFile(SCORE_FILE);
         assertTrue(scores.isEmpty(), "Reading from an empty file should return an empty list.");
     }
 

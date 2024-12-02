@@ -1,7 +1,5 @@
 package WordGame;
 
-import com.sun.scenario.effect.impl.prism.PrRenderInfo;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -34,26 +32,12 @@ public class World
 
     }
 
-    public void addCountry(Country country)
-    {
-        countries.put(country.getName(), country);
-    }
-
     public Country getCountry(String name)
     {
         return countries.get(name);
     }
 
-    // Method to print all countries
-    public void printCountries()
-    {
-        for(Country country : countries.values())
-        {
-            System.out.println(country);
-        }
-    }
-
-    public Map<String, Country> getAllCountries()
+    public Map<String, Country> getMapOfCountries()
     {
         return countries;
     }

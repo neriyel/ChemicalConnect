@@ -6,26 +6,19 @@ import java.util.Scanner;
 
 public class Main
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
-        // Create a World object to hold country data
-        World earth = new World();
 
         // Create a Scanner object for user input
-        try(Scanner sc = new Scanner(System.in))
+        WordGame wordgame = new WordGame();
+        try
         {
-            // Create the WordGame object with the World and Scanner
-            WordGame game = new WordGame(earth, sc);
+            wordgame.play();
 
-            // Start the game
-            try
-            {
-                game.play();
-            }
-            catch(IOException e)
-            {
-                System.err.println("An error occurred while running the game: " + e.getMessage());
-            }
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 }

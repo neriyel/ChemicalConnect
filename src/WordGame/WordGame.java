@@ -1,8 +1,6 @@
 package WordGame;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,214 +9,163 @@ import java.util.Scanner;
 
 public class WordGame
 {
+    // static variables
+    private static final int    RESET_VALUE        = 0;
+    private static final int    MAX_QUESTIONS      = 10;
+    private static final int    MAX_QUESTION_INDEX = 3;
+    private static final String CORRECT_MESSAGE    = "CORRECT!";
+    private static final String INCORRECT_MESSAGE  = "INCORRECT! The correct answer was: %s%n";
 
-    private final World   earth;
-    private final Scanner sc;
+    // instance variables (final)
+    private final World   world;
+    private final Scanner scan;
 
-    public WordGame(World earth, Scanner sc)
+    // instance variables (non-final)
+    private int         totalGamesPlayed;
+    private int         correctFirstAttempt;
+    private int         correctSecondAttempt;
+    private int         incorrect;
+    private List<Score> scores;
+
+    public WordGame()
     {
-        this.earth = earth;
-        this.sc    = sc;
+        this.world                = new World();
+        this.scan                 = new Scanner(System.in);
+        this.totalGamesPlayed     = RESET_VALUE;
+        this.correctFirstAttempt  = RESET_VALUE;
+        this.correctSecondAttempt = RESET_VALUE;
+        this.incorrect            = RESET_VALUE;
+        this.scores               = new ArrayList<>();
+    }
+
+    private boolean isCorrectAnswer(final String userResponse, final String correctAnswer)
+    {
+        return userResponse.equalsIgnoreCase(correctAnswer);
+    }
+
+    private void handleResponse(final String correctAnswer)
+    {
+        String userResponse = scan.nextLine()
+                .trim();
+
+        if(isCorrectAnswer(userResponse, correctAnswer))
+        {
+            System.out.println(CORRECT_MESSAGE);
+            correctFirstAttempt += 2; // Award points for the correct first attempt
+        }
+        else
+        {
+            System.out.println("INCORRECT! Try again.");
+            userResponse = scan.nextLine()
+                    .trim();
+
+            if(isCorrectAnswer(userResponse, correctAnswer))
+            {
+                System.out.println(CORRECT_MESSAGE + " on second attempt!");
+                correctSecondAttempt++;
+            }
+            else
+            {
+                System.out.printf(INCORRECT_MESSAGE, correctAnswer);
+                incorrect++;
+            }
+        }
     }
 
     public void play() throws IOException
     {
+        boolean currentlyPlaying = true;
 
-        boolean playingWord = true;
-
-
-
-        int wordGamesPlayed      = 0;
-        int correctFirstAttempt  = 0;
-        int correctSecondAttempt = 0;
-        int incorrect            = 0;
-
-        while(playingWord)
+        while(currentlyPlaying)
         {
+            System.out.println("Welcome to Word Game!");
+            totalGamesPlayed++;
 
-            System.out.println("Welcome to the Word Game!");
-            wordGamesPlayed++;
-
-            Random             rand         = new Random();
-            final List<String> countryNames = new ArrayList<>(earth.getAllCountries()
+            final Random rand = new Random();
+            final List<String> countryNames = new ArrayList<>(world.getMapOfCountries()
                                                                       .keySet());
 
-            // Loop through 10 questions for each game session
-            for(int i = 0; i < 10; i++)
+            for(int i = 0; i < MAX_QUESTIONS; i++)
             {
-                int           randomIndex       = rand.nextInt(countryNames.size());
-                final String  randomCountryName = countryNames.get(randomIndex);
-                final Country country           = earth.getCountry(randomCountryName);
+                final int     randInt         = rand.nextInt(countryNames.size());
+                final String  randCountryName = countryNames.get(randInt);
+                final Country country         = world.getCountry(randCountryName);
+                final int     questionIndex   = rand.nextInt(MAX_QUESTION_INDEX);
 
-                int    questionType = rand.nextInt(3); // 0, 1, or 2
-                String userAnswer   = null;
-
-                switch(questionType)
+                switch(questionIndex)
                 {
-
-                    // Case 0: Ask for the country with a specific capital city
                     case 0 ->
                     {
-                        System.out.printf("What country has the capital city %s?%n", country.getCapitalCityName());
-                        userAnswer = sc.nextLine()
-                                .trim();
-
-                        // Checking the user answer
-                        if(userAnswer.equalsIgnoreCase(country.getName()))
-                        {
-                            System.out.println("CORRECT!");
-                            correctFirstAttempt += 2;  // Award points for the correct first attempt
-                        }
-                        else
-                        {
-                            System.out.println("INCORRECT! Try again.");
-                            userAnswer = sc.nextLine()
-                                    .trim();
-
-                            if(userAnswer.equalsIgnoreCase(country.getName()))
-                            {
-                                System.out.println("CORRECT on second attempt!");
-                                correctSecondAttempt++;
-                            }
-                            else
-                            {
-                                System.out.printf("INCORRECT! The correct answer was: %s%n", country.getName());
-                                incorrect++;
-                            }
-                        }
+                        // Case 0: Question: *country* | Answer: *capital city*
+                        System.out.printf("This country has a capital city named %s?%n", country.getCapitalCity());
+                        handleResponse(country.getCountryName());
                     }
-
-                    // Case 1: Ask for the capital city of a specific country
                     case 1 ->
                     {
-                        System.out.printf("What is the capital of %s?%n", country.getName());
-                        userAnswer = sc.nextLine()
-                                .trim();
-
-                        // Checking the user answer
-                        if(userAnswer.equalsIgnoreCase(country.getCapitalCityName()))
-                        {
-                            System.out.println("CORRECT!");
-                            correctFirstAttempt += 2;  // Award points for the correct first attempt
-                        }
-                        else
-                        {
-                            System.out.println("INCORRECT! Try again.");
-                            userAnswer = sc.nextLine()
-                                    .trim();
-
-                            if(userAnswer.equalsIgnoreCase(country.getCapitalCityName()))
-                            {
-                                System.out.println("CORRECT on second attempt!");
-                                correctSecondAttempt++;
-                            }
-                            else
-                            {
-                                System.out.printf("INCORRECT! The correct answer was: %s%n", country.getCapitalCityName());
-                                incorrect++;
-                            }
-                        }
+                        // Case 1: Ask for the capital city of a specific country
+                        System.out.printf("What is the capital of %s?%n", country.getCountryName());
+                        handleResponse(country.getCapitalCity());
                     }
-
-                    // Case 2: Ask which country is described by a random fact
                     case 2 ->
                     {
+                        // Case 2: Ask which country is described by a random fact
                         String randomFact = country.getFacts()[rand.nextInt(country.getFacts().length)];
-                        System.out.printf("Which country is described by this fact: %s%n", randomFact);
-                        userAnswer = sc.nextLine()
-                                .trim();
-
-                        // Checking the user answer
-                        if(userAnswer.equalsIgnoreCase(country.getName()))
-                        {
-                            System.out.println("CORRECT!");
-                            correctFirstAttempt += 2;  // Award points for the correct first attempt
-                        }
-                        else
-                        {
-                            System.out.println("INCORRECT! Try again.");
-                            userAnswer = sc.nextLine()
-                                    .trim();
-
-                            if(userAnswer.equalsIgnoreCase(country.getName()))
-                            {
-                                System.out.println("CORRECT on second attempt!");
-                                correctSecondAttempt++;
-                            }
-                            else
-                            {
-                                System.out.printf("INCORRECT! The correct answer was: %s%n", country.getName());
-                                incorrect++;
-                            }
-                        }
+                        System.out.printf("This fun fact belongs to which country? : %s%n", randomFact);
+                        handleResponse(country.getCountryName());
                     }
-
-                    // Default case (should not occur)
                     default -> System.out.println("Invalid question type!");
                 }
-
             }
 
-            // Display the results after each game session
-            displayResults(wordGamesPlayed, correctFirstAttempt, correctSecondAttempt, incorrect);
-
-            // Ask the user if they want to play again
-            playingWord = promptPlayAgain();
+            // Display results and prompt user to play again
+            displayResults();
+            currentlyPlaying = restartGame();
         }
     }
 
-    private void displayResults(int wordGamesPlayed, int correctFirstAttempt, int correctSecondAttempt, int incorrect) throws IOException
+    private void displayResults() throws IOException
     {
+        System.out.printf("""
+                                  Game Over!
+                                  Word games played: %d
+                                  Correct on First Attempt: %d
+                                  Correct on Second Attempt: %d
+                                  Incorrect: %d
+                                  """, totalGamesPlayed, correctFirstAttempt, correctSecondAttempt, incorrect);
 
         final LocalDateTime time;
-        final Score         userScore;
-        final List<Score>   scores;
+        Score               currentScore;
 
-        System.out.printf("Game Over!\nWord games played: %d\nCorrect on First Attempt: %d\nCorrect on Second Attempt: %d\nIncorrect: %d\n", wordGamesPlayed, correctFirstAttempt, correctSecondAttempt, incorrect);
+        time         = LocalDateTime.now();
+        currentScore = new Score(time, totalGamesPlayed, correctFirstAttempt, correctSecondAttempt, incorrect);
 
-        time      = LocalDateTime.now();
-        userScore = new Score(time, wordGamesPlayed, correctFirstAttempt, correctSecondAttempt, incorrect);
+        // First: append the current score to the score file
+        Score.appendCurrentScoreToFile(currentScore, "score.txt");
+        scores = Score.readAllScoresFromFile("score.txt");
 
-        Score.appendScoreToFile(userScore, "score.txt");
-
-        scores = Score.readScoresFromFile("score.txt");
-
-        // Check high score
-        final Score highScore = scores.stream()
-                .max((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore()))
-                .orElse(null);
-
-        if(highScore != null && userScore.getScore() < highScore.getScore())
-        {
-            System.out.printf("You did not beat the high score of %d points from %s.%n", highScore.getScore(), highScore.dateTimePlayed);
-        }
-        else
-        {
-            System.out.println("Congratulations! You set a new high score!");
-        }
+        // Second: check for the currently highest score and notify user if they beat it or not
+        Score.checkHighestScoreAndPrompt(scores, currentScore);
     }
 
-    private boolean promptPlayAgain()
+    private boolean restartGame()
     {
-
         System.out.println("Play again? (Yes/No)");
 
         while(true)
         {
-            String playAgain = sc.nextLine()
+            switch(scan.nextLine()
                     .trim()
-                    .toLowerCase();
-            if(playAgain.equals("yes"))
+                    .toLowerCase())
             {
-                return true;
-            }
-            else if(playAgain.equals("no"))
-            {
-                return false;
-            }
-            else
-            {
-                System.out.println("Invalid input. Please type 'Yes' or 'No':");
+                case "yes" ->
+                {
+                    return true;
+                }
+                case "no" ->
+                {
+                    return false;
+                }
+                default -> System.out.println("Please only type 'Yes' or 'No':");
             }
         }
     }

@@ -1,37 +1,30 @@
 package WordGame;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Country
 {
 
     // instance variables (final)
-    private final String name;
-    private final String capitalCityName;
+    private final String countryName;
+    private final String capitalCity;
 
     // instance variables (non-final)
-    private String[] facts;
+    private final String[] facts;
 
-    public Country(String name, String capitalCityName, String[] facts)
+    public Country(final String countrName, final String capitalCity, final String[] facts)
     {
-        this.name            = name;
-        this.capitalCityName = capitalCityName;
-        this.facts           = facts;
+        this.countryName = countrName;
+        this.capitalCity = capitalCity;
+        this.facts       = facts;
     }
 
-    public String getName()
+    public String getCountryName()
     {
-        return name;
+        return countryName;
     }
 
-    public String getCapitalCityName()
+    public String getCapitalCity()
     {
-        return capitalCityName;
+        return capitalCity;
     }
 
     public String[] getFacts()
@@ -47,18 +40,24 @@ public class Country
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Country: ")
-                .append(name)
-                .append(" Capital:  \n")
-                .append(capitalCityName)
-                .append(" Facts: ");
-        for(String fact : facts)
+        final StringBuilder sb;
+        sb = new StringBuilder();
+
+        sb.append("Country: ");
+        sb.append(countryName);
+        sb.append("Capital:  \n");
+        sb.append(capitalCity);
+        sb.append("Facts: ");
+
+        if(facts != null)
         {
-            sb.append("\n  - ")
-                    .append(fact);  // Print each fact on a new line
+            for(final String fact : facts)
+            {
+                sb.append("\n  - ");
+                sb.append(fact);
+            }
         }
-        System.out.println("\n");
+
         return sb.toString();
     }
 }

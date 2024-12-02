@@ -8,15 +8,19 @@ import java.util.List;
 
 public class Score
 {
-    final                String            dateTimePlayed;
-    private final        int               numGamesPlayed;
-    private final        int               numCorrectFirstAttempt;
-    private final        int               numCorrectSecondAttempt;
-    private final        int               numIncorrectTwoAttempts;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    // static variables
+    private static final DateTimeFormatter FORMATTER             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final int               RESET_VALUE           = 0;
+    private static final int               STATEMENT_SPLIT_LIMIT = 2;
+    private static final int               VALUE_INDEX           = 1; // 1th index because statement[0]:value[1]
 
-    // Constructor with 5 parameters
-    public Score(LocalDateTime dateTime, int games, int first, int second, int incorrect)
+    final         String dateTimePlayed;
+    private final int    numGamesPlayed;
+    private final int    numCorrectFirstAttempt;
+    private final int    numCorrectSecondAttempt;
+    private final int    numIncorrectTwoAttempts;
+
+    public Score(final LocalDateTime dateTime, final int games, final int first, final int second, final int incorrect)
     {
         this.dateTimePlayed          = dateTime.format(FORMATTER);
         this.numGamesPlayed          = games;
@@ -25,75 +29,88 @@ public class Score
         this.numIncorrectTwoAttempts = incorrect;
     }
 
-    // Method to append score to file
-    public static void appendScoreToFile(Score score, String fileName)
+    public static void appendCurrentScoreToFile(final Score score, final String fileName)
     {
         try(FileWriter writer = new FileWriter(fileName, true))
         {
-            writer.write(score.toString());
-            writer.write(System.lineSeparator());
+            writer.write(score + System.lineSeparator());
         }
         catch(IOException e)
         {
-            System.out.println("Error handling the file: " + e.getMessage());
+            System.out.println("Error writing to file: " + e.getMessage());
         }
     }
 
-    // Method to read scores from a file and return a list of Score objects
-    public static List<Score> readScoresFromFile(String filename) throws IOException
+    public static List<Score> readAllScoresFromFile(final String filename) throws IOException
     {
         final List<Score> scores;
         scores = new ArrayList<>();
 
-        try(final BufferedReader reader = new BufferedReader(new FileReader(filename)))
+        try(BufferedReader reader = new BufferedReader(new FileReader(filename)))
         {
-            String dateTime = null;
-
-            int gamesPlayed           = 0;
-            int correctFirstAttempts  = 0;
-            int correctSecondAttempts = 0;
-            int incorrectAttempts     = 0;
-
             String line;
+            String dateTime;
+            int    gamesPlayed;
+            int    firstAttempts;
+            int    secondAttempts;
+            int    incorrectAttempts;
+
+            dateTime          = null;
+            gamesPlayed       = RESET_VALUE;
+            firstAttempts     = RESET_VALUE;
+            secondAttempts    = RESET_VALUE;
+            incorrectAttempts = RESET_VALUE;
+
             while((line = reader.readLine()) != null)
             {
                 if(line.startsWith("Date and Time:"))
                 {
-                    dateTime = line.split(": ", 2)[1];
+                    dateTime = line.split(": ", STATEMENT_SPLIT_LIMIT)[VALUE_INDEX];
                 }
-
                 else if(line.startsWith("Games Played:"))
                 {
-                    gamesPlayed = Integer.parseInt(line.split(": ")[1]);
+                    gamesPlayed = Integer.parseInt(line.split(": ")[VALUE_INDEX]);
                 }
-
                 else if(line.startsWith("Correct First Attempts:"))
                 {
-                    correctFirstAttempts = Integer.parseInt(line.split(": ")[1]);
+                    firstAttempts = Integer.parseInt(line.split(": ")[VALUE_INDEX]);
                 }
-
                 else if(line.startsWith("Correct Second Attempts:"))
                 {
-                    correctSecondAttempts = Integer.parseInt(line.split(": ")[1]);
+                    secondAttempts = Integer.parseInt(line.split(": ")[VALUE_INDEX]);
                 }
-
                 else if(line.startsWith("Incorrect Attempts:"))
                 {
-                    incorrectAttempts = Integer.parseInt(line.split(": ")[1]);
+                    incorrectAttempts = Integer.parseInt(line.split(": ")[VALUE_INDEX]);
                 }
-
-                else if(line.startsWith("Score:"))
+                else if(line.startsWith("Score:") && dateTime != null)
                 {
-                    assert dateTime != null;
-                    LocalDateTime dateTimeParsed = LocalDateTime.parse(dateTime, FORMATTER);
-                    scores.add(new Score(dateTimeParsed, gamesPlayed, correctFirstAttempts, correctSecondAttempts, incorrectAttempts));
+                    final LocalDateTime parsedDate;
+                    parsedDate = LocalDateTime.parse(dateTime, FORMATTER);
+
+                    scores.add(new Score(parsedDate, gamesPlayed, firstAttempts, secondAttempts, incorrectAttempts));
                 }
             }
         }
         return scores;
     }
 
-    // Override the toString method to return a formatted string
+    public static void checkHighestScoreAndPrompt(final List<Score> scores, final Score userScore)
+    {
+        Score highScore = scores.stream()
+                .max((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore()))
+                .orElse(null);
+
+        if(highScore == null || userScore.getScore() > highScore.getScore())
+        {
+            System.out.println("Congratulations! You set a new high score!");
+        }
+        else
+        {
+            System.out.printf("You did not beat the high score of %d points from %s.%n", highScore.getScore(), highScore.dateTimePlayed);
+        }
+    }
+
     @Override
     public String toString()
     {
@@ -104,32 +121,11 @@ public class Score
                                      Correct Second Attempts: %d
                                      Incorrect Attempts: %d
                                      Score: %d points
-                                     """, dateTimePlayed, numGamesPlayed, numCorrectFirstAttempt, numCorrectSecondAttempt, numIncorrectTwoAttempts, getScore() // Dynamically calculate score when calling toString
-        );
+                                     """, dateTimePlayed, numGamesPlayed, numCorrectFirstAttempt, numCorrectSecondAttempt, numIncorrectTwoAttempts, getScore());
     }
 
-    public static void checkHighScoreAndNotify(List<Score> scores, Score userScore)
-    {
-
-        final Score highScore;
-        highScore = scores.stream()
-                .max((s1, s2) -> Integer.compare(s1.getScore(), s2.getScore()))
-                .orElse(null);
-
-        if(highScore == null || userScore.getScore() > highScore.getScore())
-        {
-            System.out.println("Congratulations! You set a new high score!");
-        }
-
-        else
-        {
-            System.out.printf("You did not beat the high score of %d points per game from %s.%n", highScore.getScore(), highScore.dateTimePlayed);
-        }
-    }
-
-    // Calculate score based on correct attempts
     public int getScore()
     {
-        return numCorrectFirstAttempt * 2 + numCorrectSecondAttempt;
+        return (numCorrectFirstAttempt * 2) + numCorrectSecondAttempt;
     }
 }
