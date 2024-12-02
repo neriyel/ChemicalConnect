@@ -7,17 +7,21 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * MyGame, Chemical Connect. Drives the program.
+ */
 public class MyGame extends Application
 {
 
     @Override
     public void start(Stage primaryStage) throws IOException
     {
-        FXMLLoader loader;
-        Scene      scene;
+        final FXMLLoader loader;
+        final Scene      scene;
 
         loader = new FXMLLoader(getClass().getResource("MyGame.fxml"));
         scene  = new Scene(loader.load(), 420, 696);
+
         primaryStage.setResizable(false);
         primaryStage.setTitle("My Game");
         primaryStage.setScene(scene);

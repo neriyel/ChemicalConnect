@@ -1,10 +1,11 @@
 package MyGame;
 
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+/**
+ * GameElement represents an element.
+ */
 public abstract class GameElement extends Circle
 {
     private static int   GAME_ELEMENT_STROKEWIDTH   = 3;
@@ -12,6 +13,15 @@ public abstract class GameElement extends Circle
 
     private final String elementID;
 
+    /**
+     * Constructor for GameElement
+     *
+     * @param id     is the element id
+     * @param x      is the x coord
+     * @param y      is the y coord
+     * @param radius is the radius
+     * @param color  is the color
+     */
     public GameElement(final String id, final double x, final double y, final double radius, final Color color)
     {
         super(x, y, radius, color);
@@ -20,12 +30,14 @@ public abstract class GameElement extends Circle
         this.setOnMouseEntered(e -> this.setFill(GAME_ELEMENT_ENTERED_COLOR));
     }
 
-    abstract public GameElement getElementAt(final MouseEvent x, final MouseEvent y, Pane pane);
-
-    // TODO: update logic (example, carbon 1 of serine CS1, oh yeah, logic will be in individual concrete element classes)
-    @Override
-    public String toString()
+    /**
+     * Returns elementID as a string
+     *
+     * @return
+     */
+    public String getElementID()
     {
-        return this.elementID;
+        return elementID;
     }
+
 }

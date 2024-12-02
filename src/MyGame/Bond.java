@@ -2,8 +2,12 @@ package MyGame;
 
 import javafx.scene.shape.Line;
 
+/**
+ * Bond represents a bond between two elements. Extends the Line class.
+ */
 public class Bond extends Line
 {
+    // instance variables
     private GameElement e1;
     private GameElement e2;
 
@@ -32,28 +36,51 @@ public class Bond extends Line
         this.e2 = targetElement;
     }
 
-    // Setters
-    public void setElement1(GameElement e1)
+    /**
+     * Sets element 1
+     *
+     * @param e1
+     */
+    public final void setElement1(GameElement e1)
     {
         this.e1 = e1;
     }
 
-    public void setElement2(GameElement e2)
+    /**
+     * Sets element 1
+     *
+     * @param e2
+     */
+    public final void setElement2(GameElement e2)
     {
         this.e2 = e2;
     }
 
-    // Getters
-    public GameElement getElement1()
+    /**
+     * Gets element 1
+     *
+     * @return
+     */
+    public final GameElement getElement1()
     {
         return e1;
     }
 
-    public GameElement getElement2()
+    /**
+     * Gets element 2
+     *
+     * @return
+     */
+    public final GameElement getElement2()
     {
         return e2;
     }
 
+    /**
+     * To string representation of a bond.
+     *
+     * @return
+     */
     @Override
     public String toString()
     {
@@ -61,60 +88,6 @@ public class Bond extends Line
                              e1 != null ? e1.toString() : "null",
                              e2 != null ? e2.toString() : "null");
     }
-
-//    @Override
-//    public boolean equals(final Object that)
-//    {
-//        if(that == null)
-//        {
-//            return false;
-//        }
-//
-//        if(that instanceof Bond)
-//        {
-//            // this Bond's coordinates
-//            //            final double thisBondX1;
-//            //            final double thisBondY1;
-//            //            final double thisBondX2;
-//            //            final double thisBondY2;
-//            //
-//            //            // that Bond's coordinates
-//            //            final double thatBondX1;
-//            //            final double thatBondY1;
-//            //            final double thatBondX2;
-//            //            final double thatBondY2;
-//            //
-//            //            thisBondX1 = this.getStartX();
-//            //            thisBondY1 = this.getStartY();
-//            //            thisBondX2 = this.getEndX();
-//            //            thisBondY2 = this.getEndY();
-//            //
-//            //            thatBondX1 = this.getStartX();
-//            //            thatBondY1 = this.getStartY();
-//            //            thatBondX2 = this.getEndX();
-//            //            thatBondY2 = this.getEndY();
-//
-//            final String thisElement1;
-//            final String thisElement2;
-//            final String thatElement1;
-//            final String  thatElement2;
-//            final boolean result;
-//
-//            thisElement1 = this.getElement1().toString();
-//            thisElement2 = this.getElement2().toString();
-//            thatElement1 = this.getElement1().toString();
-//            thatElement2 = this.getElement2().toString();
-//
-//            // Returns equality in any order: Ie [A,B] == [B,A]
-//            result = thisElement1.equals(thatElement1) && thisElement2.equals(thatElement2) ||
-//                    thisElement1.equals(thatElement2) && thatElement2.equals(thatElement1);
-//
-//            return result;
-//        }
-//
-//        // that is not instanceOf Bond
-//        return false;
-//    }
 
 }
 

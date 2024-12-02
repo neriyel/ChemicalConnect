@@ -32,7 +32,7 @@ public class Country
         return facts;
     }
 
-    public void setFactsAtIndex(final String fact, final int index)
+    public final void setFactsAtIndex(final String fact, final int index)
     {
         facts[index] = fact;
     }

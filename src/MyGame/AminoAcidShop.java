@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * AminoAcidShop represents all 20 amino acids. Reads the file.
+ * AminoAcidShop represents the 'shop' for all 20 amino acids. This is where all amino acids, and their bond configuration (answer key for the game) are initialized, stored, and sent Reads the file.
  */
 public class AminoAcidShop
 {
@@ -21,6 +21,9 @@ public class AminoAcidShop
     private final Map<String, ArrayList<String>>   aminoAcidReferences;
     private final Map<String, ArrayList<String[]>> answerKey;
 
+    /**
+     * Constructor for the AminoAcid shop
+     */
     public AminoAcidShop()
     {
         this.aminoAcidReferences = new HashMap<>();
@@ -29,6 +32,9 @@ public class AminoAcidShop
         populateAminoAcidsAnswerKey();
     }
 
+    /**
+     * Populates the amino acid answer key (bond configurations)
+     */
     private void populateAminoAcidsAnswerKey()
     {
         try
@@ -75,25 +81,11 @@ public class AminoAcidShop
         {
             e.printStackTrace();
         }
-
-        //debugging
-        //        System.out.println("INSIDE POPULATE ANSWER KEY!!!!");
-        //        for(Map.Entry<String, ArrayList<String[]>> entry : answerKey.entrySet())
-        //        {
-        //            System.out.print(entry.getKey() + ": ");
-        //
-        //            // Loop through the ArrayList
-        //            for(String[] array : entry.getValue())
-        //            {
-        //                System.out.println(Arrays.toString(array));  // Print each String[] as a string
-        //            }
-        //        }
     }
 
     /**
      * Parses the file and populates the aminoAcidReferences Map.
      *
-     * @return
      */
     private void populateAminoAcids()
     {
@@ -132,12 +124,6 @@ public class AminoAcidShop
 
             }
 
-            //debugging
-            //            for(Map.Entry<String, ArrayList<String>> entry : aminoAcidReferences.entrySet())
-            //            {
-            //                System.out.println(entry.getKey() + ": " + entry.getValue());
-            //            }
-
         }
         catch(final IOException e)
         {
@@ -148,9 +134,9 @@ public class AminoAcidShop
     /**
      * Filters out null strings if any
      *
-     * @param tempList
+     * @param tempList is the list to be filtered
      *
-     * @return
+     * @return a non null filtered stream
      */
     private Stream<String> acidStream(final List<String> tempList)
     {
@@ -163,13 +149,16 @@ public class AminoAcidShop
      *
      * @param aa is the requested amino acid
      */
-    public ArrayList<String> getAminoAcidAsMapValue(final String aa)
+    public final ArrayList<String> getAminoAcidAsMapValue(final String aa)
     {
-        //        System.out.println("Inside getAAAsMapValue: " + aminoAcidReferences.get(aa));
         return aminoAcidReferences.get(aa);
     }
 
-    public Map<String, ArrayList<String[]>> getAnswerKey()
+    /**
+     * Getter for answer key
+     * @return
+     */
+    public final Map<String, ArrayList<String[]>> getAnswerKey()
     {
         return answerKey;
     }

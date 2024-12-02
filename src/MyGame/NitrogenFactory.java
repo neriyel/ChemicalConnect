@@ -1,5 +1,8 @@
 package MyGame;
 
+/**
+ * Factory for Nitrogen (factory design pattern)
+ */
 public class NitrogenFactory implements ElementFactory
 {
     @Override

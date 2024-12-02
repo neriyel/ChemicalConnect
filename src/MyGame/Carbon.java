@@ -6,6 +6,9 @@ import javafx.scene.paint.Color;
 
 import javax.print.DocFlavor;
 
+/**
+ * Carbon represents the element carbon
+ */
 public class Carbon extends GameElement
 {
 
@@ -29,11 +32,5 @@ public class Carbon extends GameElement
     {
         this.setStroke(CARBON_BORDER_COLOR);
         this.setOnMouseExited(e -> this.setFill(CARBON_COLOR));
-    }
-
-    @Override
-    public GameElement getElementAt(final MouseEvent x, final MouseEvent y, final Pane pane)
-    {
-        return null;
     }
 }

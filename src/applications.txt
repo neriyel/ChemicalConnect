@@ -1,0 +1,30 @@
+lesson 1:   initializers in class Oxygen (initializer block)
+            overloading in class Bond (I did constructor chaining but not method overloading)
+
+lesson 2:   inheritance in class GameElement (extends javaFX Circle class)
+            exceptions in class ElementsOverlappingOnScreenException, implemented in class MyGameController
+
+lesson 3:   overriding in class Bond (toString() method)
+            substitution in class MyGameController (List<GameElement>)
+
+lesson 4:   abstract methods in class GameElement
+            abstract classes in class GameElement. Concrete example class Carbon
+
+lesson 5:   collections in class
+            iterator in class MyGameController (removeBond() method)
+
+lesson 6:   lambda expression in class MyGameController (initialize () method)
+            method references in class MyGameController (initialize () method)
+            nested classes in class MyGameController (initialize() method)
+
+lesson 8:   scanner in class NOT IMPLEMENTED because I'm using a GUI :(
+            file in class AminoAcidShop
+            streams and filters in class AminoAcidShop
+
+lesson 9:   GUI in class MyGame
+
+lesson 10:  unit tests in class MyGameTest (not working)
+
+lesson 11: design pattern (factory) in interface ElementFactory, CarbonFactory, Carbon. Implemented in class AminoAcid
+
+lesson 12:  concurrency in class NOT IMPLEMENTED :(

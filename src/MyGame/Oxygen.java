@@ -8,12 +8,19 @@ public class Oxygen extends GameElement
 {
 
     // Static variables
-    private static Color OXYGEN_COLOR        = Color.DEEPPINK;
-    private static Color OXYGEN_BORDER_COLOR = Color.PURPLE;
-    private static int   OXYGEN_RADIUS       = 15;
+    private static final Color OXYGEN_COLOR;
+    private static final Color OXYGEN_BORDER_COLOR;
+    private static final int   OXYGEN_RADIUS;
 
-    // Instance variables (final)
+    // Static initializer block
+    static
+    {
+        OXYGEN_COLOR        = Color.DEEPPINK;
+        OXYGEN_BORDER_COLOR = Color.PURPLE;
+        OXYGEN_RADIUS       = 15;
+    }
 
+    // Constructor
     public Oxygen(final String id, final double x, final double y)
     {
         super(id, x, y, OXYGEN_RADIUS, OXYGEN_COLOR);
@@ -27,11 +34,5 @@ public class Oxygen extends GameElement
     {
         this.setStroke(OXYGEN_BORDER_COLOR);
         this.setOnMouseExited(e -> this.setFill(OXYGEN_COLOR));
-    }
-
-    @Override
-    public GameElement getElementAt(final MouseEvent x, final MouseEvent y, final Pane pane)
-    {
-        return null;
     }
 }

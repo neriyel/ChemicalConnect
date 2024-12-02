@@ -29,9 +29,4 @@ public class Sulphur extends GameElement
         this.setOnMouseExited(e -> this.setFill(SULPHUR_COLOR));
     }
 
-    @Override
-    public GameElement getElementAt(final MouseEvent x, final MouseEvent y, final Pane pane)
-    {
-        return null;
-    }
 }

@@ -21,17 +21,17 @@ public class AminoAcid
     private static final char SULPHUR_ID  = 'S';
 
     // Instance variables (final)
-    private final String aminoAcid;
+    private final String                 aminoAcid;
+    private final ArrayList<GameElement> elements;
 
     // Instance variables (non-final)
-    private ArrayList<GameElement> elements;
 
     /**
-     * Constructor
+     * Constructor for AminoAcid objects
      *
-     * @param aa
+     * @param aa is the AA specified
      */
-    public AminoAcid(final char aa)
+    public AminoAcid(final char aa) throws ElementsOverlappingOnScreenException
     {
         this.aminoAcid = String.valueOf(aa);
         this.elements  = new ArrayList<>();
@@ -44,11 +44,9 @@ public class AminoAcid
      * <p>
      * populate ArrayList<GameElement>
      *
-     * @param aminoAcid
-     *
-     * @return
+     * @param aminoAcid is the target amino acid
      */
-    private void createAminoAcid(final String aminoAcid)
+    private void createAminoAcid(final String aminoAcid) throws ElementsOverlappingOnScreenException
     {
         final AminoAcidShop     shop;
         final ElementFactory    carbonFactory;
@@ -101,30 +99,32 @@ public class AminoAcid
             }
         }
 
+        checkForOverlappingCircles();
+
     }
 
-    public ArrayList<GameElement> getAminoAcidElements()
+    /**
+     * Getter for amino acid's actual element postions
+     * @return the amino acid configuration as an ArrayList<GameElement>
+     */
+    public final ArrayList<GameElement> getAminoAcidElements()
     {
-        // debugging
-        //        System.out.println("inside getAminoAcid" + this.elements);
         return this.elements;
     }
 
-    public void answerKey()
-    {
-        // list of correct bonds
-    }
-
-    public String getAminoAcidID()
+    /**
+     * Getter for amino acid ID
+     * @return
+     */
+    public final String getAminoAcidID()
     {
         return this.aminoAcid;
     }
 
-    public AminoAcid getAminoAcid(final String key)
-    {
-        return new AminoAcid(key.charAt(0));
-    }
-
+    /**
+     * To string representation of amino acid. Returns amino acid name from it's ID
+     * @return
+     */
     @Override
     public String toString()
     {
@@ -153,4 +153,45 @@ public class AminoAcid
             default -> "Unknown amino acid";
         };
     }
+
+    /**
+     * Checks for overlapping elements on the GUI. Prevents this.
+     *
+     * @throws ElementsOverlappingOnScreenException prevents overlapping elements on screen.
+     */
+    public final void checkForOverlappingCircles() throws ElementsOverlappingOnScreenException
+    {
+        if(elements != null)
+        {
+            for(int i = 0; i < elements.size(); i++)
+            {
+                final GameElement circle1;
+                circle1 = elements.get(i);
+
+                for(int j = i + 1; j < elements.size(); j++)
+                {
+                    final GameElement circle2;
+                    final double      dx;
+                    final double      dy;
+                    final double      distance;
+
+                    circle2  = elements.get(j);
+                    dx       = circle1.getCenterX() - circle2.getCenterX();
+                    dy       = circle1.getCenterY() - circle2.getCenterY();
+                    distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if(distance < circle1.getRadius() + circle2.getRadius())
+                    {
+                        throw new ElementsOverlappingOnScreenException(
+                                "Overlapping detected between circles at indices " + i + " and " +
+                                        j + ": Circle1 (" + circle1.getCenterX() + ", " +
+                                        circle1.getCenterY() + ") and Circle2 (" +
+                                        circle2.getCenterX() + ", " + circle2.getCenterY() + ")");
+                    }
+                }
+            }
+        }
+
+    }
+
 }

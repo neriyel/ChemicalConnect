@@ -11,8 +11,8 @@ public class NumberGame extends Application
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        FXMLLoader loader;
-        Scene      scene;
+        final FXMLLoader loader;
+        final Scene      scene;
 
         loader = new FXMLLoader(getClass().getResource("NumberGame.fxml"));
         scene  = new Scene(loader.load(), 696, 420);

@@ -1,9 +1,10 @@
 package MyGame;
 
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+/**
+ * Represents a Nitrogen element.
+ */
 public class Nitrogen extends GameElement
 {
 
@@ -14,21 +15,25 @@ public class Nitrogen extends GameElement
 
     // Instance variables
 
+    /**
+     * Constructor for Nitrogen
+     * @param id
+     * @param x
+     * @param y
+     */
     public Nitrogen(final String id, final double x, final double y)
     {
         super(id, x, y, NITROGEN_RADIUS, NITROGEN_COLOR);
         setNitrogenMouseEventColors();
     }
 
+    /**
+     * Helper method for setting colors
+     */
     private void setNitrogenMouseEventColors()
     {
         this.setStroke(NITROGEN_BORDER_COLOR);
         this.setOnMouseExited(e -> this.setFill(NITROGEN_COLOR));
     }
 
-    @Override
-    public GameElement getElementAt(final MouseEvent x, final MouseEvent y, final Pane pane)
-    {
-        return null;
-    }
 }

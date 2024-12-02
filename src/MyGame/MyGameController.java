@@ -10,13 +10,15 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for MyGame Chemical Connect
+ */
 public class MyGameController
 {
     //Static variables
@@ -24,8 +26,8 @@ public class MyGameController
     private static final int    SINGLE_BOND_WIDTH  = 5;
     private static final int    DOUBLE_BOND_WIDTH  = 3;
     private static final double BOND_OFFSET        = 5.0;
-    private static final String AMINO_ACIDS        = "AVILM";
-    //    private static final String AMINO_ACIDS        = "ACDEFGHIKLMNPQRSTVWY";
+    private static final String AMINO_ACIDS        = "AVILM"; // only 5 amino acids (for now!)
+    //private static final String AMINO_ACIDS        = "ACDEFGHIKLMNPQRSTVWY";
     private static final int    LENGTH_USER_BONDS  = 2; // 2 because a bond holds 2 elements
 
     private static final int    SINGLE_BOND_LENGTH    = 1;
@@ -92,7 +94,7 @@ public class MyGameController
     @FXML
     public void initialize()
     {
-        // Instantiate _____
+        // Instantiate users answers, as bonds, list of bonds, available amino acids
         usersAnswers        = new HashMap<>();
         usersAnswersAsBonds = new HashMap<>();
         bonds               = new ArrayList<>();
@@ -111,14 +113,45 @@ public class MyGameController
             availableAminoAcids.add(aa);
         }
 
+        // Nested class for button actions
+        class ButtonEventHandler
+        {
+            public void handleStartGameAction(javafx.event.ActionEvent e)
+            {
+                try
+                {
+                    nextQuestion(e);
+                }
+                catch(final ElementsOverlappingOnScreenException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            public void handleSubmitAction(javafx.event.ActionEvent e)
+            {
+                try
+                {
+                    submitEvent(e);
+                }
+                catch(final ElementsOverlappingOnScreenException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+        // Instantiate the nested handler class
+        final ButtonEventHandler buttonEventHandler;
+        buttonEventHandler = new ButtonEventHandler();
+
         // Set button handlers
-        startGame.setOnAction(e -> nextQuestion(e));
+        startGame.setOnAction(buttonEventHandler::handleStartGameAction);
         rules.setOnAction(e -> showRules());
-        submit.setOnAction(e -> submitEvent(e));
+        submit.setOnAction(buttonEventHandler::handleSubmitAction);
 
-        //debugg
-        //        System.out.println("inside initilize: " + bonds);
-
+        // Debug
+        // System.out.println("inside initialize: " + bonds);
     }
 
     /**
@@ -155,7 +188,8 @@ public class MyGameController
         // Set the initial Element
         currentBond.setElement1(selectedElement);
 
-        pane.getChildren().add(currentBond);
+        pane.getChildren()
+                .add(currentBond);
     }
 
     /**
@@ -224,7 +258,8 @@ public class MyGameController
             else if(existingBond.length == 1)
             {
                 // Note 3: see JavaDoc
-                pane.getChildren().remove(currentBond);
+                pane.getChildren()
+                        .remove(currentBond);
 
                 // Add a second (parallel) line
                 final Bond offsetDoubleBond;
@@ -237,19 +272,22 @@ public class MyGameController
                 //                {
                 //                    System.out.println(Arrays.toString(bond));
                 //                }
-                pane.getChildren().add(offsetDoubleBond);
+                pane.getChildren()
+                        .add(offsetDoubleBond);
                 addClickListenerToLine(offsetDoubleBond, pane); // Add click listener for removal
             }
             else
             {
                 // If two or more bonds exist: reject the action
-                pane.getChildren().remove(currentBond); // Remove the redundant line
+                pane.getChildren()
+                        .remove(currentBond); // Remove the redundant line
             }
         }
         else
         {
             // Remove the temporary line if the connection is invalid
-            pane.getChildren().remove(currentBond);
+            pane.getChildren()
+                    .remove(currentBond);
             //debugging
             //            System.out.println("invalid bonds?: ");
             //            for(Bond[] bond : bonds)
@@ -312,7 +350,12 @@ public class MyGameController
             for(final Bond bond : bondPair)
             {
                 // TODO: probably make this a helper method
-                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() && bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) || (bond.getStartX() == e2.getCenterX() && bond.getStartY() == e2.getCenterY() && bond.getEndX() == e1.getCenterX() && bond.getEndY() == e1.getCenterY()))
+                if((bond.getStartX() == e1.getCenterX() && bond.getStartY() == e1.getCenterY() &&
+                        bond.getEndX() == e2.getCenterX() && bond.getEndY() == e2.getCenterY()) ||
+                        (bond.getStartX() == e2.getCenterX() &&
+                                bond.getStartY() == e2.getCenterY() &&
+                                bond.getEndX() == e1.getCenterX() &&
+                                bond.getEndY() == e1.getCenterY()))
                 {
                     bondsBetween.add(bond);
                 }
@@ -360,7 +403,8 @@ public class MyGameController
             bondPair = iter.next();
 
             // Check if the bond belongs to this bond pair
-            if(Arrays.asList(bondPair).contains(bond))
+            if(Arrays.asList(bondPair)
+                    .contains(bond))
             {
                 // Extract the coordinates of the bond being removed
                 double lineStartX = bond.getStartX();
@@ -389,7 +433,8 @@ public class MyGameController
 
                 // If valid, remove the bond from the List, and the GUI
                 iter.remove();
-                pane.getChildren().remove(bond);
+                pane.getChildren()
+                        .remove(bond);
                 break; // Stop once the bond is found and removed
             }
         }
@@ -442,14 +487,17 @@ public class MyGameController
         double py = ux * offset;
 
         // Create parallel bond
-        final Bond parallelLine = new Bond(bond.getStartX() + px, bond.getStartY() + py, bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
+        final Bond parallelLine = new Bond(
+                bond.getStartX() + px,
+                bond.getStartY() + py,
+                bond.getEndX() + px, bond.getEndY() + py, selectedElement, targetElement);
         parallelLine.setStrokeWidth(DOUBLE_BOND_WIDTH);
 
         return parallelLine;
     }
 
     @FXML
-    public void nextQuestion(final ActionEvent actionEvent)
+    public void nextQuestion(final ActionEvent actionEvent) throws ElementsOverlappingOnScreenException
     {
         // Hide home buttons | Show game buttons
         removeHomeButtons();
@@ -470,7 +518,8 @@ public class MyGameController
         for(final GameElement element : currentAminoAcidGUI)
         {
             addMouseEventHandlers(element, gamePane);
-            gamePane.getChildren().add(element); // Add the dot to the pane
+            gamePane.getChildren()
+                    .add(element); // Add the dot to the pane
         }
     }
 
@@ -492,7 +541,8 @@ public class MyGameController
         {
             for(final GameElement element : currentAminoAcidGUI)
             {
-                gamePane.getChildren().remove(element);
+                gamePane.getChildren()
+                        .remove(element);
             }
             currentAminoAcidGUI.clear();
         }
@@ -503,7 +553,8 @@ public class MyGameController
             {
                 for(final Bond bond1 : bond)
                 {
-                    gamePane.getChildren().remove(bond1);
+                    gamePane.getChildren()
+                            .remove(bond1);
                 }
             }
             bonds.clear();
@@ -517,7 +568,7 @@ public class MyGameController
      * list is storing a reference to the same array object, not a copy of its contents. Updating the
      * placeholder affects all the entries in the list that references it.
      */
-    private void submitEvent(final ActionEvent e)
+    private void submitEvent(final ActionEvent e) throws ElementsOverlappingOnScreenException
     {
         // userKey: Amino Acid ID | userValuePlaceholder: Array of bonds ex [TC1, TN1]
         final String              userKey;
@@ -540,19 +591,25 @@ public class MyGameController
                 if(bond.length == SINGLE_BOND_LENGTH)
                 {
                     // Store element1 and element2 in temp String[]
-                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1().toString();
-                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2().toString();
+                    userValuePlaceholder[0] = bond[SINGLE_BOND_INDEX].getElement1()
+                            .toString();
+                    userValuePlaceholder[1] = bond[SINGLE_BOND_INDEX].getElement2()
+                            .toString();
                     // Add to tempMapValue Array AND usersAnswersAsBonds map
                     tempMapValues.add(userValuePlaceholder);
-                    usersAnswersAsBonds.get(userKey).add(bond[SINGLE_BOND_INDEX]);
+                    usersAnswersAsBonds.get(userKey)
+                            .add(bond[SINGLE_BOND_INDEX]);
                 }
                 else if(bond.length == DOUBLE_BOND_LENGTH)
                 {
-                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1().toString();
-                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2().toString();
+                    userValuePlaceholder[0] = bond[DOUBLE_BOND_INDEX].getElement1()
+                            .toString();
+                    userValuePlaceholder[1] = bond[DOUBLE_BOND_INDEX].getElement2()
+                            .toString();
                     // Add to tempMapValue Array
                     tempMapValues.add(userValuePlaceholder);
-                    usersAnswersAsBonds.get(userKey).add(bond[DOUBLE_BOND_INDEX]);
+                    usersAnswersAsBonds.get(userKey)
+                            .add(bond[DOUBLE_BOND_INDEX]);
                 }
             }
 
@@ -652,7 +709,7 @@ public class MyGameController
         rules.showAndWait();
     }
 
-    public void endSession(final ActionEvent actionEvent)
+    public void endSession(final ActionEvent actionEvent) throws ElementsOverlappingOnScreenException
     {
         // remove buttons (submit)
         gameButtonHBox.setVisible(false);
@@ -665,7 +722,7 @@ public class MyGameController
         // display results
     }
 
-    public void checkAllResponses()
+    public void checkAllResponses() throws ElementsOverlappingOnScreenException
     {
         // Get answer key from aminoAcidShop
         AminoAcidShop                    shop;
@@ -818,7 +875,8 @@ public class MyGameController
         keyElement2  = bond[E2_INDEX];
 
         // Returns equality in any order: Ie [A,B] == [B,A]
-        result = (userElement1.equals(keyElement1) && userElement2.equals(keyElement2)) || (userElement1.equals(keyElement2) && userElement2.equals(keyElement1));
+        result = (userElement1.equals(keyElement1) && userElement2.equals(keyElement2)) ||
+                (userElement1.equals(keyElement2) && userElement2.equals(keyElement1));
 
         return result;
     }
@@ -835,12 +893,17 @@ public class MyGameController
         sbIncorrect = new StringBuilder("The amino acids you drew incorrectly: \n");
 
         // add correct amino acids as a string, via a stream
-        correctAA = correctAminoAcids.stream().map(AminoAcid::toString).collect(Collectors.joining("\n"));
+        correctAA = correctAminoAcids.stream()
+                .map(AminoAcid::toString)
+                .collect(Collectors.joining("\n"));
         // add incorrect amino acids as a string, via a stream
-        incorrectAA = incorrectAminoAcids.stream().map(AminoAcid::toString).collect(Collectors.joining("\n"));
+        incorrectAA = incorrectAminoAcids.stream()
+                .map(AminoAcid::toString)
+                .collect(Collectors.joining("\n"));
 
         // calculate percent score
-        scoreAsPercent = (totalQuestionsAnswered == NO_QUESTIONS_ANSWERED) ? NO_QUESTIONS_ANSWERED : (double) score / totalQuestionsAnswered * PERCENT;
+        scoreAsPercent = (totalQuestionsAnswered == NO_QUESTIONS_ANSWERED) ? NO_QUESTIONS_ANSWERED :
+                (double) score / totalQuestionsAnswered * PERCENT;
 
         sbCorrect.append(correctAA);
         sbIncorrect.append(incorrectAA);
@@ -853,7 +916,7 @@ public class MyGameController
 
     }
 
-    public void restartGame(final ActionEvent e)
+    public void restartGame(final ActionEvent e) throws ElementsOverlappingOnScreenException
     {
         // Restart score | question count | usersAnswers | usersAnswersAsBonds | availableAminoAcids
         score                  = 0;

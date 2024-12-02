@@ -1,0 +1,11 @@
+Best:
+- Good basic examples of how to use JavaFX GUI elements
+- Bouncing ideas off of it for better ways to draft out MyGame, ie it gives insight on what may be the most efficient easiest ways to implement ideas in the long run
+    - ex: pros and cons of using Maps vs ArrayList<> down the road
+- Good for generating text file EXAMPLES for GUI Circle positions
+- very helpful for JavaFX .fxml creation as a guide
+
+Frustrating:
+- Although it was helpful for brainstorming for simplicity, when i paste my code and ask it to simplify, it doesnt really do that, i have to tell it exactly how to simplify the code
+- Although it was helpful for JavaFX .fxml, I still had to do a lot of manual changes and updated to the FrontEnd code because it would never do exactly what i wanted, since making chemical representations is quite a complex task
+
